@@ -1,0 +1,87 @@
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #0f0f0f;
+    font-family: "Tiny5", sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    image-rendering: pixelated;
+    position: relative;
+  }
+  
+  body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 200%;
+    background-image:
+      repeating-linear-gradient(45deg, #1c1c1c 0 40px, #2a2a2a 40px 80px),
+      repeating-linear-gradient(-45deg, #1c1c1c 0 40px, #2a2a2a 40px 80px);
+    background-size: 80px 80px;
+    animation: waveBG 6s ease-in-out infinite;
+    z-index: 0;
+    transform-origin: center;
+  }
+  
+  @keyframes waveBG {
+    0% {
+      transform: translateX(0) translateY(0) scale(1) skewY(1deg);
+    }
+    50% {
+      transform: translateX(-20px) translateY(-10px) scale(1.02) skewY(-1deg);
+    }
+    100% {
+      transform: translateX(0) translateY(0) scale(1) skewY(1deg);
+    }
+  }
+  
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1;
+    text-align: center;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 12px;
+    position: relative;
+    width: 40%;
+    height: 100%;
+  }
+  
+  .car-gif {
+    width: 350px;
+    image-rendering: pixelated;
+    margin-bottom: 5px;
+  }
+  
+  .game-title {
+    font-size: 2.5rem;
+    margin-top: 50px;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px #444;
+  }
+  
+  .menu-buttons button {
+    background-color: #222;
+    color: #fff;
+    border: 2px solid #fff;
+    padding: 12px 24px;
+    font-size: 1.2rem;
+    margin: 10px;
+    cursor: pointer;
+    font-family: inherit;
+    image-rendering: pixelated;
+    transition: background-color 0.2s;
+  }
+  
+  .menu-buttons button:hover {
+    background-color: #444;
+  }
+  
