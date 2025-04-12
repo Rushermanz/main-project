@@ -21,12 +21,13 @@ body {
     width: 200%;
     height: 200%;
     background-image:
-      repeating-linear-gradient(45deg, #1c1c1c 0 40px, #2a2a2a 40px 80px),
-      repeating-linear-gradient(-45deg, #1c1c1c 0 40px, #2a2a2a 40px 80px);
+      repeating-linear-gradient(45deg, #1c1c1c 0 40px, #243040 40px 80px),
+      repeating-linear-gradient(-45deg, #1c1c1c 0 40px, #243040 40px 80px);
     background-size: 80px 80px;
     animation: waveBG 6s ease-in-out infinite;
     z-index: 0;
     transform-origin: center;
+    opacity: 0.5;
   }
   
   @keyframes waveBG {
@@ -54,7 +55,7 @@ body {
     width: 40%;
     height: 100%;
   }
-  
+
   .car-gif {
     width: 350px;
     image-rendering: pixelated;
@@ -84,4 +85,38 @@ body {
   .menu-buttons button:hover {
     background-color: #444;
   }
+
+  .top-bar {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 2;
+  }
+  
+  .top-bar button {
+    background-color: #222;
+    color: #fff;
+    border: 2px solid #fff;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-family: inherit;
+    cursor: pointer;
+    image-rendering: pixelated;
+    transition: background-color 0.2s;
+  }
+  
+  .top-bar button:hover {
+    background-color: #444;
+  }
+  
+  
+
+  .player-name {
+    margin-top: 65px;
+    font-size: 1.2rem;
+    color: #ddd;
+    text-shadow: 1px 1px #000;
+  }
+  
+  
   

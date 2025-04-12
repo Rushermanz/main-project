@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-    
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -12,18 +12,22 @@
 
 </head>
     <body>
-        <div class="container">
+    
+        <div class="top-bar">
+            <button onclick="openProfile()">Profile</button>
+        </div>
 
+        <!-- Center UI -->
+        <div class="container">
             <h1 class="game-title">Pixel Racer</h1>
             <img src="assets/car.gif" alt="Pixel Car" class="car-gif" />
-
             <div class="menu-buttons">
-            <button onclick="openProfile()">Profile</button>
             <button onclick="openPlay()">Play</button>
             <button onclick="openSettings()">Settings</button>
             <button onclick="quitGame()">Quit</button>
             </div>
-        
+            <p id="player-name" class="player-name">Player: Player 1</p>
+
         </div>
 
         <script src="script.js"></script>
