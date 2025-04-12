@@ -1,3 +1,34 @@
+document.getElementById('saveName').addEventListener('click', function() {
+  const newName = document.getElementById('playerName').value.trim();
+  if (newName !== "") {
+      if (confirm(`Change name to "${newName}"?`)) {
+          fetch('/save_name', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ name: newName })
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.status === 'success') {
+                  alert("Name updated!");
+                  window.location.href = 'index.html'; // Redirect to home page
+              }
+          });
+      }
+  }
+});
+
+window.onload = () => {
+  fetch('/get_name')
+  .then(response => response.json())
+  .then(data => {
+      const nameDisplay = document.getElementById("player-name");
+      nameDisplay.textContent = `Player: ${data.name}`;
+  });
+};
+
 function updatePlayerName(newName) {
     const nameDisplay = document.getElementById("player-name");
     nameDisplay.textContent = `Player: ${newName}`;
@@ -32,7 +63,7 @@ function updatePlayerName(newName) {
       document.getElementById("name-input").value = savedName;
     }
   };
-    
+
 
 function openProfile() {
     alert("Open Profile Section (modal)");
