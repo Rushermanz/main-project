@@ -1,3 +1,9 @@
+function updatePlayerName(newName) {
+    const nameDisplay = document.getElementById("player-name");
+    nameDisplay.textContent = `Player: ${newName}`;
+  }
+  
+
 function openProfile() {
     alert("Open Profile Section (modal)");
   }
