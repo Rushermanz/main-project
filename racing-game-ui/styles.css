@@ -25,7 +25,7 @@ body {
       repeating-linear-gradient(-45deg, #1c1c1c 0 40px, #243040 40px 80px);
     background-size: 80px 80px;
     animation: waveBG 6s ease-in-out infinite;
-    z-index: 0;
+    z-index: -1;
     transform-origin: center;
     opacity: 0.5;
   }
@@ -117,6 +117,9 @@ body {
     color: #ddd;
     text-shadow: 1px 1px #000;
   }
+  
+
+ 
   
   
   

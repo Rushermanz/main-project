@@ -1,0 +1,149 @@
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #0f0f0f;
+    font-family: "Tiny5", sans-serif;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+
+  body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 200%;
+    background-image:
+      repeating-linear-gradient(45deg, #1c1c1c 0 40px, #243040 40px 80px),
+      repeating-linear-gradient(-45deg, #1c1c1c 0 40px, #243040 40px 80px);
+    background-size: 80px 80px;
+    animation: waveBG 6s ease-in-out infinite;
+    z-index: -1;
+    transform-origin: center;
+    opacity: 0.5;
+  }
+  @keyframes waveBG {
+    0% {
+      transform: translateX(0) translateY(0) scale(1) skewY(1deg);
+    }
+    50% {
+      transform: translateX(-20px) translateY(-10px) scale(1.02) skewY(-1deg);
+    }
+    100% {
+      transform: translateX(0) translateY(0) scale(1) skewY(1deg);
+    }
+  }
+  
+  .back-button {
+    margin: 20px;
+    align-self: flex-start;
+    margin-left: 40px;
+    padding: 10px 20px;
+    background-color: #000;
+    border: 2px solid #fff;
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.2rem;
+    image-rendering: pixelated;
+    box-shadow: 3px 3px #444;
+  }
+  
+  .profile-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+  }
+  
+  .profile-title {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+  }
+  
+  .player-name-box, .car-customization-box {
+    background-color: rgba(0, 0, 0, 0.4);
+    padding: 20px 30px;
+    border-radius: 12px;
+    border: 2px solid #222;
+    text-align: center;
+  }
+  
+  .player-name-box label {
+    display: block;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+  
+  .input-group {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .input-group input {
+    padding: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    background-color: #000;
+    color: #fff;
+    border: 2px solid #444;
+    width: 200px;
+  }
+  
+  .input-group button {
+    background-color: #005500;
+    color: #fff;
+    border: 2px solid #0f0;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background-color 0.2s;
+  }
+  
+  .input-group button:hover {
+    background-color: #008800;
+  }
+  
+  .car-customization-box h2 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+  }
+  
+  .car-display img {
+    width: 120px;
+    image-rendering: pixelated;
+    margin-bottom: 10px;
+  }
+  
+  .color-options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .color {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #fff;
+    cursor: pointer;
+    border-radius: 6px;
+  }
+  
+  .color.pink { background-color: #ff00cc; }
+  .color.cyan { background-color: #00ffff; }
+  .color.green { background-color: #00ff66; }
+  .color.red { background-color: #ff0044; }
+  .color.orange { background-color: #ff8000; }
+  .color.yellow { background-color: #ffff00; }
+  .color.purple { background-color: #9900ff; }
+  .color.white { background-color: #ffffff; }
+  
