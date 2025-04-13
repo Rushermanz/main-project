@@ -109,5 +109,30 @@ function openSettings() {
 }
 
 function quitGame() {
-  alert("Thanks for playing!");
+  if (confirm("Are you sure you want to quit and reset your profile?")) {
+    localStorage.setItem("playerName", "Player 1");
+    localStorage.setItem("selectedCar", "/static/assets/car.gif");
+    localStorage.removeItem("avatarImage");
+
+    fetch("/save_name", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: "Player 1" })
+    });
+
+    // Show the modal
+    document.getElementById("quitModal").style.display = "flex";
+  }
 }
+
+// Close tab (works only if tab was script-opened)
+function closeTab() {
+  window.close();
+}
+
+// Return to home (reload fresh)
+function returnHome() {
+  window.location.href = "/";
+}
+
+

@@ -28,6 +28,17 @@
     <p id="player-name" class="player-name">Player: Player 1</p>
   </div>
 
+  <!-- Quit Modal -->
+<div id="quitModal" class="modal">
+  <div class="modal-content">
+    <h1>👋 Thanks for playing Pixel Racer!</h1>
+    <p>You’ve been logged out.</p>
+    <button onclick="closeTab()">Close Tab</button>
+    <button onclick="returnHome()">Return to Home</button>
+  </div>
+</div>
+
+
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

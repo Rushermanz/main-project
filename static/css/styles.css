@@ -181,7 +181,47 @@ body {
       height: 40px;
     }
   }
-  
+
+  /* Quit Modal Styling */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #111;
+  color: white;
+  padding: 30px;
+  border: 2px solid white;
+  border-radius: 12px;
+  font-family: "Tiny5", sans-serif;
+  text-align: center;
+  image-rendering: pixelated;
+}
+
+.modal-content button {
+  background-color: #222;
+  color: white;
+  border: 2px solid white;
+  font-family: inherit;
+  font-size: 1rem;
+  margin: 10px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.modal-content button:hover {
+  background-color: #444;
+}
+
   
 
  
