@@ -4,24 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Pixel Racer</title>
-  <link rel="stylesheet" href="/static/css/styles.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
   <link href="https://fonts.googleapis.com/css2?family=Tiny5&display=swap" rel="stylesheet" />
 </head>
 
 <body>
-  <!-- Top Right Profile Button -->
+  <!-- Avatar Profile Button (top right) -->
   <div class="top-bar">
-    <img id="homeAvatar" src="/static/assets/avatar.png" onclick="location.href='profile.html'" />
+    <img id="homeAvatar" src="{{ url_for('static', filename='assets/avatar.png') }}" onclick="location.href='/profile'" />
   </div>
-  
 
   <!-- Center UI -->
   <div class="container">
     <h1 class="game-title">Pixel Racer</h1>
-    <img src="/static/assets/car.gif" alt="Pixel Car" class="car-gif" />
-
+    <img src="{{ url_for('static', filename='assets/car.gif') }}" alt="Pixel Car" class="car-gif" />
+    
     <div class="menu-buttons">
       <button onclick="openPlay()">Play</button>
       <button onclick="openSettings()">Settings</button>
@@ -31,7 +28,6 @@
     <p id="player-name" class="player-name">Player: Player 1</p>
   </div>
 
-  <script src="/static/js/script.js"></script>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
-
