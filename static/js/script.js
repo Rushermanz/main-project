@@ -5,17 +5,33 @@ const cars = [
   "/static/assets/car3.gif"
 ];
 
-const bgMusic = new Audio("/static/assets/bg-music.mp3");
-bgMusic.loop = true;
-bgMusic.volume = 0.5;
-
 // ========== Global Background Music ==========
-if (localStorage.getItem("musicEnabled") !== "false") {
-  bgMusic.play().catch(() => {
-    document.body.addEventListener("click", () => bgMusic.play(), { once: true });
+if (!window.bgMusic) {
+  window.bgMusic = new Audio("/static/assets/bg-music.mp3");
+  bgMusic.loop = true;
+  bgMusic.volume = 0.5;
+
+  const musicEnabled = localStorage.getItem("musicEnabled");
+
+  if (musicEnabled === null) {
+    localStorage.setItem("musicEnabled", "true"); // default ON
+    bgMusic.muted = false;
+  } else {
+    bgMusic.muted = musicEnabled === "false";
+  }
+
+  if (!bgMusic.muted) {
+    const savedTime = parseFloat(sessionStorage.getItem("musicTime")) || 0;
+    bgMusic.currentTime = savedTime;
+
+    bgMusic.play().catch(() => {
+      document.body.addEventListener("click", () => bgMusic.play(), { once: true });
+    });
+  }
+
+  window.addEventListener("beforeunload", () => {
+    sessionStorage.setItem("musicTime", bgMusic.currentTime);
   });
-} else {
-  bgMusic.muted = true;
 }
 
 // ========== Save Player Name ==========
@@ -24,7 +40,7 @@ function savePlayerName() {
   const newName = input.value.trim() || "Player 1";
 
   if (confirm(`Change name to "${newName}"?`)) {
-    localStorage.setItem("playerName", newName);
+    sessionStorage.setItem("playerName", newName);
 
     fetch("/save_name", {
       method: "POST",
@@ -32,7 +48,7 @@ function savePlayerName() {
       body: JSON.stringify({ name: newName })
     })
     .then(res => res.json())
-    .then(data => {
+    .then(() => {
       alert("Name updated!");
       updatePlayerNameDisplay();
       if (window.location.pathname.includes("profile")) {
@@ -45,17 +61,18 @@ function savePlayerName() {
 function updatePlayerNameDisplay() {
   const display = document.getElementById("playerNameDisplay") || document.getElementById("player-name");
   if (display) {
-    const savedName = localStorage.getItem("playerName") || "Player 1";
+    const savedName = sessionStorage.getItem("playerName") || "Player 1";
     display.textContent = `Player: ${savedName}`;
   }
 }
 
 // ========== Car Switch ==========
 function cycleCar() {
-  const currentCar = localStorage.getItem("selectedCar") || cars[0];
+  const currentCar = sessionStorage.getItem("selectedCar") || cars[0];
   const index = cars.indexOf(currentCar);
   const nextCar = cars[(index + 1) % cars.length];
-  localStorage.setItem("selectedCar", nextCar);
+  sessionStorage.setItem("selectedCar", nextCar);
+
   const carImg = document.getElementById("carImage");
   if (carImg) carImg.src = nextCar;
 }
@@ -67,13 +84,11 @@ function triggerAvatarUpload() {
 
 function loadAvatar() {
   const avatarImg = document.getElementById("avatarImage") || document.getElementById("homeAvatar");
-  const storedAvatar = localStorage.getItem("avatarImage");
+  const storedAvatar = sessionStorage.getItem("avatarImage");
   if (avatarImg) {
-    if (storedAvatar && storedAvatar !== "null") {
-      avatarImg.src = storedAvatar;
-    } else {
-      avatarImg.src = "/static/assets/avatar.png";
-    }
+    avatarImg.src = storedAvatar && storedAvatar !== "null"
+      ? storedAvatar
+      : "/static/assets/avatar.png";
   }
 }
 
@@ -86,7 +101,7 @@ if (avatarInput) {
     const reader = new FileReader();
     reader.onload = (event) => {
       const base64Image = event.target.result;
-      localStorage.setItem("avatarImage", base64Image);
+      sessionStorage.setItem("avatarImage", base64Image);
       document.getElementById("avatarImage").src = base64Image;
     };
     reader.readAsDataURL(file);
@@ -95,12 +110,8 @@ if (avatarInput) {
 
 // ========== On Load ==========
 window.onload = () => {
-  if (localStorage.getItem("musicEnabled") !== "false") {
-    bgMusic.play();
-  }
-
-  const savedName = localStorage.getItem("playerName") || "Player 1";
-  const savedCar = localStorage.getItem("selectedCar") || cars[0];
+  const savedName = sessionStorage.getItem("playerName") || "Player 1";
+  const savedCar = sessionStorage.getItem("selectedCar") || cars[0];
 
   const input = document.getElementById("playerNameInput") || document.getElementById("name-input");
   if (input) input.value = savedName;
@@ -129,7 +140,9 @@ function openPlay() {
 function openSettings() {
   document.getElementById("settingsModal").style.display = "flex";
   const toggle = document.getElementById("audioToggle");
-  toggle.checked = localStorage.getItem("musicEnabled") !== "false";
+
+  const musicSetting = localStorage.getItem("musicEnabled");
+  toggle.checked = musicSetting === null || musicSetting !== "false"; // default ON
 }
 
 function closeSettings() {
@@ -140,8 +153,8 @@ function showSettingsTab(tab) {
   document.querySelectorAll(".tab").forEach(btn => btn.classList.remove("active"));
   document.querySelectorAll(".settings-tab").forEach(tabDiv => tabDiv.classList.remove("active"));
 
-  document.getElementById(tab + "-settings").classList.add("active");
-  document.getElementById("tab-" + tab).classList.add("active");
+  document.getElementById(`${tab}-settings`).classList.add("active");
+  document.getElementById(`tab-${tab}`).classList.add("active");
 }
 
 function toggleAudio() {
@@ -159,22 +172,21 @@ function toggleAudio() {
 // ========== Quit ==========
 function quitGame() {
   if (confirm("Are you sure you want to quit and reset your profile?")) {
-    // Reset localStorage
-    localStorage.setItem("playerName", "Player 1");
-    localStorage.setItem("selectedCar", "/static/assets/car.gif");
-    localStorage.removeItem("avatarImage");
+    sessionStorage.setItem("playerName", "Player 1");
+    sessionStorage.setItem("selectedCar", "/static/assets/car.gif");
+    sessionStorage.removeItem("avatarImage");
+    sessionStorage.removeItem("musicTime");
 
-    // Update DB
+    localStorage.removeItem("musicEnabled");
+
     fetch("/save_name", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: "Player 1" })
     });
 
-    // Show modal
     document.getElementById("quitModal").style.display = "flex";
 
-    // === Apply changes to UI immediately ===
     updatePlayerNameDisplay();
     loadAvatar();
 
@@ -188,7 +200,6 @@ function quitGame() {
     if (menuCar) menuCar.src = "/static/assets/car.gif";
   }
 }
-
 
 function closeTab() {
   alert("Please close this tab manually.");
