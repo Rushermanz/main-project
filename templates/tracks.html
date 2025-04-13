@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Select Track - Pixel Racer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/tracks.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Tiny5&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <button class="back-button" onclick="window.location.href='/'">← BACK</button>
+
+  <h1 class="select-title">SELECT TRACK</h1>
+
+  <div class="track-grid">
+    <div class="track-card easy">
+      <img src="/static/assets/Las_Vegas_Circuit.png" alt="Las Vegas Circuit">
+      <div class="track-name">LAS VEGAS</div>
+      <span class="track-difficulty easy-tag">EASY</span>
+    </div>
+
+    <div class="track-card medium">
+      <img src="/static/assets/Italy_Circuit.png" alt="MONZA Circuit">
+      <div class="track-name">MONZA</div>
+      <span class="track-difficulty medium-tag">MEDIUM</span>
+    </div>
+
+    <div class="track-card hard">
+      <img src="/static/assets/Monaco_Circuit.png" alt="MONACO Circuit">
+      <div class="track-name">MONACO</div>
+      <span class="track-difficulty hard-tag">HARD</span>
+    </div>
+
+    <div class="track-card medium">
+      <img src="/static/assets/Bahrain_Circuit.png" alt="BAHRAIN Circuit">
+      <div class="track-name">BAHRAIN</div>
+      <span class="track-difficulty medium-tag">MEDIUM</span>
+    </div>
+
+    <div class="track-card hard">
+      <img src="/static/assets/Silverstone_Circuit.png" alt="SILVERSTONE Circuit">
+      <div class="track-name">SILVERSTONE</div>
+      <span class="track-difficulty hard-tag">HARD</span>
+    </div>
+  </div>
+
+  <!-- Track Popup Modal -->
+<div id="trackPopup" class="modal">
+    <div class="modal-content settings-box">
+      <h2 id="popupTrackName">TRACK NAME</h2>
+  
+      <div class="tab-switch">
+        <button id="tab-info" class="tab active" onclick="showTrackTab('info')">INFO</button>
+        <button id="tab-leaderboard" class="tab" onclick="showTrackTab('leaderboard')">LEADERBOARD</button>
+      </div>
+  
+      <!-- Info Section -->
+      <div id="info-tab" class="track-tab active">
+        <p id="popupDescription">Track description goes here...</p>
+        <div class="race-buttons">
+          <button class="race-btn pink">RACE BOT</button>
+          <button class="race-btn cyan">2 PLAYERS</button>
+          <button class="race-btn green">TIME TRIAL</button>
+        </div>
+      </div>
+  
+      <!-- Leaderboard Section -->
+      <div id="leaderboard-tab" class="track-tab">
+        <table class="leaderboard-table">
+          <thead>
+            <tr><th>#</th><th>PLAYER</th><th>TIME</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>rush</td><td>1:02</td></tr>
+            <tr><td>2</td><td>neo</td><td>1:10</td></tr>
+          </tbody>
+        </table>
+        <button class="race-btn green">START TIME TRIAL</button>
+      </div>
+  
+      <button class="back-button" onclick="closeTrackPopup()">BACK</button>
+    </div>
+  </div>
+  
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

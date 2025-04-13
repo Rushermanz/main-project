@@ -133,8 +133,9 @@ function openProfile() {
 }
 
 function openPlay() {
-  alert("Track selection coming soon...");
+  window.location.href = "/tracks"; // or "/tracks" if routed by Flask
 }
+
 
 // ========== Settings ==========
 function openSettings() {
@@ -207,4 +208,30 @@ function closeTab() {
 
 function returnHome() {
   window.location.href = "/";
+}
+
+const popup = document.getElementById("trackPopup");
+const popupName = document.getElementById("popupTrackName");
+const popupDesc = document.getElementById("popupDescription");
+
+document.querySelectorAll(".track-card").forEach((card, index) => {
+  card.addEventListener("click", () => {
+    const name = card.querySelector(".track-name").innerText;
+    const difficulty = card.querySelector(".track-difficulty").innerText;
+    popupName.innerText = name;
+    popupDesc.innerText = `This is a ${difficulty.toLowerCase()} track with unique challenges.`; // Placeholder
+    popup.style.display = "flex";
+    showTrackTab("info");
+  });
+});
+
+function closeTrackPopup() {
+  popup.style.display = "none";
+}
+
+function showTrackTab(tab) {
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".track-tab").forEach(t => t.classList.remove("active"));
+  document.getElementById(`tab-${tab}`).classList.add("active");
+  document.getElementById(`${tab}-tab`).classList.add("active");
 }

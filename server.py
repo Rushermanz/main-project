@@ -11,6 +11,10 @@ def home():
 def profile():
     return render_template('profile.html')
 
+@app.route('/tracks')  
+def tracks():
+    return render_template('tracks.html')
+
 @app.route('/save_name', methods=['POST'])
 def save_name():
     data = request.get_json()
