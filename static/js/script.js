@@ -1,4 +1,24 @@
-// ========== Name Save ==========
+// ========== Car Options ==========
+const cars = [
+  "/static/assets/car.gif",
+  "/static/assets/car2.gif",
+  "/static/assets/car3.gif"
+];
+
+const bgMusic = new Audio("/static/assets/bg-music.mp3");
+bgMusic.loop = true;
+bgMusic.volume = 0.5;
+
+// ========== Global Background Music ==========
+if (localStorage.getItem("musicEnabled") !== "false") {
+  bgMusic.play().catch(() => {
+    document.body.addEventListener("click", () => bgMusic.play(), { once: true });
+  });
+} else {
+  bgMusic.muted = true;
+}
+
+// ========== Save Player Name ==========
 function savePlayerName() {
   const input = document.getElementById("playerNameInput") || document.getElementById("name-input");
   const newName = input.value.trim() || "Player 1";
@@ -6,7 +26,6 @@ function savePlayerName() {
   if (confirm(`Change name to "${newName}"?`)) {
     localStorage.setItem("playerName", newName);
 
-    // Send to Flask backend
     fetch("/save_name", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -32,16 +51,10 @@ function updatePlayerNameDisplay() {
 }
 
 // ========== Car Switch ==========
-const cars = [
-  "/static/assets/car.gif",
-  "/static/assets/car2.gif",
-  "/static/assets/car3.gif"
-];
-
 function cycleCar() {
-  let currentCar = localStorage.getItem("selectedCar") || cars[0];
-  let index = cars.indexOf(currentCar);
-  let nextCar = cars[(index + 1) % cars.length];
+  const currentCar = localStorage.getItem("selectedCar") || cars[0];
+  const index = cars.indexOf(currentCar);
+  const nextCar = cars[(index + 1) % cars.length];
   localStorage.setItem("selectedCar", nextCar);
   const carImg = document.getElementById("carImage");
   if (carImg) carImg.src = nextCar;
@@ -56,7 +69,11 @@ function loadAvatar() {
   const avatarImg = document.getElementById("avatarImage") || document.getElementById("homeAvatar");
   const storedAvatar = localStorage.getItem("avatarImage");
   if (avatarImg) {
-    avatarImg.src = storedAvatar || "/static/assets/avatar.png";
+    if (storedAvatar && storedAvatar !== "null") {
+      avatarImg.src = storedAvatar;
+    } else {
+      avatarImg.src = "/static/assets/avatar.png";
+    }
   }
 }
 
@@ -81,6 +98,7 @@ window.onload = () => {
   if (localStorage.getItem("musicEnabled") !== "false") {
     bgMusic.play();
   }
+
   const savedName = localStorage.getItem("playerName") || "Player 1";
   const savedCar = localStorage.getItem("selectedCar") || cars[0];
 
@@ -95,24 +113,19 @@ window.onload = () => {
   const menuCar = document.querySelector(".car-gif");
   if (menuCar) menuCar.src = savedCar;
 
-  
-  
+  loadAvatar();
 };
 
-const bgMusic = new Audio("/static/assets/bg-music.mp3");
-bgMusic.loop = true;
-bgMusic.volume = 0.5;
-
-
-// ========== Menu Button Functions ==========
+// ========== Navigation ==========
 function openProfile() {
-  window.location.href = "/profile"; // Flask route!
+  window.location.href = "profile.html";
 }
 
 function openPlay() {
-  alert("Go to Track Selection");
+  alert("Track selection coming soon...");
 }
 
+// ========== Settings ==========
 function openSettings() {
   document.getElementById("settingsModal").style.display = "flex";
   const toggle = document.getElementById("audioToggle");
@@ -134,6 +147,8 @@ function showSettingsTab(tab) {
 function toggleAudio() {
   const isEnabled = document.getElementById("audioToggle").checked;
   localStorage.setItem("musicEnabled", isEnabled);
+  bgMusic.muted = !isEnabled;
+
   if (isEnabled) {
     bgMusic.play();
   } else {
@@ -141,32 +156,44 @@ function toggleAudio() {
   }
 }
 
-
+// ========== Quit ==========
 function quitGame() {
   if (confirm("Are you sure you want to quit and reset your profile?")) {
+    // Reset localStorage
     localStorage.setItem("playerName", "Player 1");
     localStorage.setItem("selectedCar", "/static/assets/car.gif");
     localStorage.removeItem("avatarImage");
 
+    // Update DB
     fetch("/save_name", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: "Player 1" })
     });
 
-    // Show the modal
+    // Show modal
     document.getElementById("quitModal").style.display = "flex";
+
+    // === Apply changes to UI immediately ===
+    updatePlayerNameDisplay();
+    loadAvatar();
+
+    const input = document.getElementById("playerNameInput") || document.getElementById("name-input");
+    if (input) input.value = "Player 1";
+
+    const carImg = document.getElementById("carImage");
+    if (carImg) carImg.src = "/static/assets/car.gif";
+
+    const menuCar = document.querySelector(".car-gif");
+    if (menuCar) menuCar.src = "/static/assets/car.gif";
   }
 }
 
-// Close tab (works only if tab was script-opened)
+
 function closeTab() {
-  window.close();
+  alert("Please close this tab manually.");
 }
 
-// Return to home (reload fresh)
 function returnHome() {
   window.location.href = "/";
 }
-
-
