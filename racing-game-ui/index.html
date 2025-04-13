@@ -1,36 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Pixel Racer</title>
   <link rel="stylesheet" href="/static/css/styles.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Tiny5&display=swap" rel="stylesheet">
-
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Tiny5&display=swap" rel="stylesheet" />
 </head>
-    <body>
-    
-        <div class="top-bar">
-            <button onclick="location.href='profile.html'">Profile</button>
-        </div>
 
-        <!-- Center UI -->
-        <div class="container">
-            <h1 class="game-title">Pixel Racer</h1>
-            <img src="/static/assets/car.gif" alt="Pixel Car" class="car-gif" />
-            <div class="menu-buttons">
-            <button onclick="openPlay()">Play</button>
-            <button onclick="openSettings()">Settings</button>
-            <button onclick="quitGame()">Quit</button>
-            </div>
-            <p id="player-name" class="player-name">Player: Player 1</p>
+<body>
+  <!-- Top Right Profile Button -->
+  <div class="top-bar">
+    <button onclick="location.href='profile.html'">Profile</button>
+  </div>
 
-        </div>
+  <!-- Center UI -->
+  <div class="container">
+    <h1 class="game-title">Pixel Racer</h1>
+    <img src="/static/assets/car.gif" alt="Pixel Car" class="car-gif" />
 
-        <script src="/static/js/script.js"></script>
-    </body>
+    <div class="menu-buttons">
+      <button onclick="openPlay()">Play</button>
+      <button onclick="openSettings()">Settings</button>
+      <button onclick="quitGame()">Quit</button>
+    </div>
+
+    <p id="player-name" class="player-name">Player: Player 1</p>
+  </div>
+
+  <script src="/static/js/script.js"></script>
+</body>
 </html>
 

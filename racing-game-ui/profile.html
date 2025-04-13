@@ -8,19 +8,22 @@
   <link href="https://fonts.googleapis.com/css2?family=Tiny5&display=swap" rel="stylesheet">
 </head>
 <body>
+
   <a href="index.html" class="back-button">← BACK</a>
 
   <div class="profile-container">
     <h1 class="profile-title">PROFILE</h1>
 
+    <!-- Player Name Input -->
     <div class="player-name-box">
-      <label for="playerName">PLAYER NAME</label>
+      <label for="playerNameInput">PLAYER NAME</label>
       <div class="input-group">
-        <input type="text" id="playerName" placeholder="Enter name..." />
-        <button id="saveName">SAVE</button>
+        <input type="text" id="playerNameInput" placeholder="Player 1" />
+        <button onclick="savePlayerName()">Save</button>
       </div>
     </div>
 
+    <!-- Car Customization -->
     <div class="car-customization-box">
       <h2>CAR CUSTOMIZATION</h2>
       <div class="car-display">
@@ -28,14 +31,14 @@
       </div>
       <p>CAR COLOR</p>
       <div class="color-options">
-        <div class="color pink"></div>
-        <div class="color cyan"></div>
-        <div class="color green"></div>
-        <div class="color red"></div>
-        <div class="color orange"></div>
-        <div class="color yellow"></div>
-        <div class="color purple"></div>
-        <div class="color white"></div>
+        <div class="color pink" onclick="selectColor('pink')"></div>
+        <div class="color cyan" onclick="selectColor('cyan')"></div>
+        <div class="color green" onclick="selectColor('green')"></div>
+        <div class="color red" onclick="selectColor('red')"></div>
+        <div class="color orange" onclick="selectColor('orange')"></div>
+        <div class="color yellow" onclick="selectColor('yellow')"></div>
+        <div class="color purple" onclick="selectColor('purple')"></div>
+        <div class="color white" onclick="selectColor('white')"></div>
       </div>
     </div>
   </div>
@@ -43,3 +46,4 @@
   <script src="/static/js/script.js"></script>
 </body>
 </html>
+
