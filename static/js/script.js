@@ -78,6 +78,9 @@ if (avatarInput) {
 
 // ========== On Load ==========
 window.onload = () => {
+  if (localStorage.getItem("musicEnabled") !== "false") {
+    bgMusic.play();
+  }
   const savedName = localStorage.getItem("playerName") || "Player 1";
   const savedCar = localStorage.getItem("selectedCar") || cars[0];
 
@@ -92,8 +95,14 @@ window.onload = () => {
   const menuCar = document.querySelector(".car-gif");
   if (menuCar) menuCar.src = savedCar;
 
-  loadAvatar();
+  
+  
 };
+
+const bgMusic = new Audio("/static/assets/bg-music.mp3");
+bgMusic.loop = true;
+bgMusic.volume = 0.5;
+
 
 // ========== Menu Button Functions ==========
 function openProfile() {
@@ -105,8 +114,33 @@ function openPlay() {
 }
 
 function openSettings() {
-  alert("Settings popup here!");
+  document.getElementById("settingsModal").style.display = "flex";
+  const toggle = document.getElementById("audioToggle");
+  toggle.checked = localStorage.getItem("musicEnabled") !== "false";
 }
+
+function closeSettings() {
+  document.getElementById("settingsModal").style.display = "none";
+}
+
+function showSettingsTab(tab) {
+  document.querySelectorAll(".tab").forEach(btn => btn.classList.remove("active"));
+  document.querySelectorAll(".settings-tab").forEach(tabDiv => tabDiv.classList.remove("active"));
+
+  document.getElementById(tab + "-settings").classList.add("active");
+  document.getElementById("tab-" + tab).classList.add("active");
+}
+
+function toggleAudio() {
+  const isEnabled = document.getElementById("audioToggle").checked;
+  localStorage.setItem("musicEnabled", isEnabled);
+  if (isEnabled) {
+    bgMusic.play();
+  } else {
+    bgMusic.pause();
+  }
+}
+
 
 function quitGame() {
   if (confirm("Are you sure you want to quit and reset your profile?")) {

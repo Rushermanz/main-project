@@ -222,6 +222,132 @@ body {
   background-color: #444;
 }
 
+/* Modal shared */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content.settings-box {
+  background-color: #0a0a1a;
+  border: 2px solid cyan;
+  border-radius: 10px;
+  padding: 30px;
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+  font-family: "Tiny5", sans-serif;
+  image-rendering: pixelated;
+}
+
+.tab-switch {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.tab {
+  background: #111;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.tab.active {
+  background-color: #00ffff;
+  color: black;
+}
+
+.settings-tab {
+  display: none;
+}
+
+.settings-tab.active {
+  display: block;
+}
+
+.audio-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #111;
+  padding: 15px;
+  border: 2px solid #444;
+}
+
+.control-block {
+  text-align: left;
+  margin: 10px 0;
+}
+
+.back-button {
+  margin-top: 20px;
+  background-color: #0f0;
+  color: black;
+  border: 2px solid white;
+  padding: 10px 20px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.back-button:hover {
+  background-color: #0c0;
+}
+
+/* Audio switch toggle */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  background-color: red;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transition: .4s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: green;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
   
 
  

@@ -28,6 +28,51 @@
     <p id="player-name" class="player-name">Player: Player 1</p>
   </div>
 
+  <!-- SETTINGS POPUP -->
+<div id="settingsModal" class="modal">
+  <div class="modal-content settings-box">
+    <h2>SETTINGS</h2>
+
+    <!-- Tab Switch -->
+    <div class="tab-switch">
+      <button id="tab-audio" class="tab active" onclick="showSettingsTab('audio')">AUDIO</button>
+      <button id="tab-controls" class="tab" onclick="showSettingsTab('controls')">CONTROLS</button>
+    </div>
+
+    <!-- AUDIO TAB -->
+    <div id="audio-settings" class="settings-tab active">
+      <div class="audio-toggle">
+        <span>🔊 AUDIO</span>
+        <label class="switch">
+          <input type="checkbox" id="audioToggle" onchange="toggleAudio()" />
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- CONTROLS TAB -->
+    <div id="controls-settings" class="settings-tab">
+      <div class="control-block">
+        <h3>PLAYER 1</h3>
+        <p>ACCELERATION: W</p>
+        <p>BRAKE: S</p>
+        <p>TURN LEFT: A</p>
+        <p>TURN RIGHT: D</p>
+      </div>
+      <div class="control-block">
+        <h3>PLAYER 2</h3>
+        <p>ACCELERATION: ↑</p>
+        <p>BRAKE: ↓</p>
+        <p>TURN LEFT: ←</p>
+        <p>TURN RIGHT: →</p>
+      </div>
+    </div>
+
+    <button onclick="closeSettings()" class="back-button">BACK</button>
+  </div>
+</div>
+
+
   <!-- Quit Modal -->
 <div id="quitModal" class="modal">
   <div class="modal-content">
