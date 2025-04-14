@@ -288,4 +288,73 @@ body {
     }
   }
   
+  @media screen and (max-width: 768px) {
+    .modal-content.settings-box {
+      flex-direction: column;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 20px;
+    }
+  
+    .track-popup-layout {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .popup-left {
+      margin-bottom: 20px;
+    }
+  
+    .popup-left img {
+      width: 80vw;
+      height: auto;
+      max-width: 320px;
+    }
+  
+    .popup-difficulty-tag {
+      margin-top: 10px;
+    }
+  
+    .popup-right {
+      width: 100%;
+      text-align: center;
+    }
+  
+    .tab-switch {
+      display: flex;
+      justify-content: center;
+      margin: 15px 0;
+      flex-wrap: wrap;
+    }
+  
+    .tab {
+      flex: 1;
+      min-width: 120px;
+      margin: 5px;
+      padding: 10px;
+    }
+  
+    .track-tab {
+      width: 100%;
+      padding: 10px 0;
+    }
+  
+    .leaderboard-table {
+      font-size: 0.9rem;
+    }
+  
+    .race-buttons {
+      flex-direction: column;
+      gap: 10px;
+    }
+  
+    .race-btn {
+      width: 100%;
+    }
+  
+    .back-button {
+      margin-top: 20px;
+      width: 100%;
+    }
+  }
   

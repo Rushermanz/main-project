@@ -187,17 +187,18 @@ function openSettings() {
   toggle.checked = musicSetting === null || musicSetting !== "false";
 }
 
-function closeTrackPopup() {
-  popup.style.display = "none";
+function closeSettings() {
+  document.getElementById("settingsModal").style.display = "none";
 }
 
-function showTrackTab(tab) {
-  document.querySelectorAll(".tab-switch .tab").forEach(t => t.classList.remove("active"));
-  document.querySelectorAll(".track-tab").forEach(t => t.classList.remove("active"));
 
+function showSettingsTab(tab) {
+  document.querySelectorAll(".tab-switch .tab").forEach(button => button.classList.remove("active"));
+  document.querySelectorAll(".settings-tab").forEach(tabDiv => tabDiv.classList.remove("active"));
   document.getElementById(`tab-${tab}`).classList.add("active");
-  document.getElementById(`${tab}-tab`).classList.add("active");
+  document.getElementById(`${tab}-settings`).classList.add("active");
 }
+
 
 function toggleAudio() {
   const isEnabled = document.getElementById("audioToggle").checked;
