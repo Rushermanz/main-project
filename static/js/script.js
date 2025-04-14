@@ -155,19 +155,6 @@ window.onload = () => {
     });
   });
 
-  document.getElementById("popupCloseButton").addEventListener("click", () => {
-    popup.style.display = "none";
-  });
-  
-
-  function showTrackTab(tab) {
-    document.querySelectorAll(".tab").forEach(btn => btn.classList.remove("active"));
-    document.querySelectorAll(".track-tab").forEach(div => div.classList.remove("active"));
-
-    document.getElementById(`tab-${tab}`).classList.add("active");
-    document.getElementById(`${tab}-tab`).classList.add("active");
-  }
-
 };
 
 // ========== Navigation ==========
@@ -251,4 +238,14 @@ function closeTab() {
 function returnHome() {
   window.location.href = "/";
 }
+// ========== Track Popup ==========
+function showTrackTab(tab) {
+  document.querySelectorAll(".track-tab-switch .tab").forEach(btn => btn.classList.remove("active"));
+  document.querySelectorAll(".track-tab").forEach(tabDiv => tabDiv.classList.remove("active"));
+  document.getElementById(`tab-${tab}`).classList.add("active");
+  document.getElementById(`${tab}-tab`).classList.add("active");
+}
 
+function closeTrackPopup() {
+  document.getElementById("trackPopup").style.display = "none";
+}
