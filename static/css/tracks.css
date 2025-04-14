@@ -90,8 +90,11 @@ body {
   .track-card img {
     width: 100%;
     height: 160px;
-    object-fit: cover;
+    object-fit: contain;
+    background-color: #000; /* optional to fill empty space */
+    padding: 10px; /* gives it breathing space */
   }
+  
   
   .track-name {
     padding: 10px 0;
@@ -148,6 +151,8 @@ body {
   }
   
   .track-tab {
+    min-height: 140px;
+    margin: 10px 0;
     display: none;
   }
   
@@ -186,4 +191,101 @@ body {
     border: 1px solid white;
     font-size: 1rem;
   }
+  
+  .track-popup-layout {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: nowrap; /* Prevent stacking unless very small screens */
+  }
+  
+  .popup-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .popup-left img {
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+    border: none;
+    margin-bottom: 10px;
+  }
+  
+  
+  .popup-difficulty-tag {
+    margin-top: 5px;
+    padding: 4px 10px;
+    font-size: 0.8rem;
+    border-radius: 4px;
+  }
+  
+  .popup-right {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .tab-switch {
+    display: flex;
+    margin-bottom: 10px;
+    background: #050505;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  
+  .track-tab-switch .tab {
+    flex: 1;
+    padding: 8px 0;
+    font-size: 1rem;
+    background-color: #111;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background-color 0.2s ease;
+  }
+  
+  .track-tab-switch .tab.active {
+    background-color: #00ffff;
+    color: black;
+  }
+  
+  .tab {
+    flex: 1;
+    padding: 8px;
+    background: #0a0a0a;
+    color: white;
+    border: none;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  
+  .tab.active {
+    background: cyan;
+    color: black;
+    font-weight: bold;
+  }
+  
+  /* Responsive fallback */
+  @media (max-width: 768px) {
+    .track-popup-layout {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    #popupTrackImage {
+      width: 90vw;
+      height: auto;
+    }
+  
+    .popup-right {
+      width: 90vw;
+    }
+  }
+  
   

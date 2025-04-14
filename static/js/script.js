@@ -14,7 +14,7 @@ if (!window.bgMusic) {
   const musicEnabled = localStorage.getItem("musicEnabled");
 
   if (musicEnabled === null) {
-    localStorage.setItem("musicEnabled", "true"); // default ON
+    localStorage.setItem("musicEnabled", "true");
     bgMusic.muted = false;
   } else {
     bgMusic.muted = musicEnabled === "false";
@@ -125,6 +125,49 @@ window.onload = () => {
   if (menuCar) menuCar.src = savedCar;
 
   loadAvatar();
+
+  // ========== TRACK POPUP LOGIC ==========
+  const popup = document.getElementById("trackPopup");
+  const popupName = document.getElementById("popupTrackName");
+  const popupDesc = document.getElementById("popupDescription");
+  const popupImg = document.getElementById("popupTrackImage");
+  const popupDiff = document.getElementById("popupTrackDifficulty");
+
+  document.querySelectorAll(".track-card").forEach(card => {
+    card.addEventListener("click", () => {
+      const name = card.querySelector(".track-name").innerText;
+      const difficulty = card.querySelector(".track-difficulty").innerText;
+      const imgSrc = card.querySelector("img").getAttribute("src");
+
+      popupName.innerText = name;
+      popupDesc.innerText = `This is a ${difficulty.toLowerCase()} track with unique challenges.`;
+      popupImg.src = imgSrc;
+      popupDiff.innerText = difficulty;
+
+      // Set class based on difficulty
+      popupDiff.className = "popup-difficulty-tag";
+      if (difficulty === "EASY") popupDiff.classList.add("easy-tag");
+      else if (difficulty === "MEDIUM") popupDiff.classList.add("medium-tag");
+      else popupDiff.classList.add("hard-tag");
+
+      popup.style.display = "flex";
+      showTrackTab("info");
+    });
+  });
+
+  document.getElementById("popupCloseButton").addEventListener("click", () => {
+    popup.style.display = "none";
+  });
+  
+
+  function showTrackTab(tab) {
+    document.querySelectorAll(".tab").forEach(btn => btn.classList.remove("active"));
+    document.querySelectorAll(".track-tab").forEach(div => div.classList.remove("active"));
+
+    document.getElementById(`tab-${tab}`).classList.add("active");
+    document.getElementById(`${tab}-tab`).classList.add("active");
+  }
+
 };
 
 // ========== Navigation ==========
@@ -133,29 +176,27 @@ function openProfile() {
 }
 
 function openPlay() {
-  window.location.href = "/tracks"; // or "/tracks" if routed by Flask
+  window.location.href = "/tracks";
 }
-
 
 // ========== Settings ==========
 function openSettings() {
   document.getElementById("settingsModal").style.display = "flex";
   const toggle = document.getElementById("audioToggle");
-
   const musicSetting = localStorage.getItem("musicEnabled");
-  toggle.checked = musicSetting === null || musicSetting !== "false"; // default ON
+  toggle.checked = musicSetting === null || musicSetting !== "false";
 }
 
-function closeSettings() {
-  document.getElementById("settingsModal").style.display = "none";
+function closeTrackPopup() {
+  popup.style.display = "none";
 }
 
-function showSettingsTab(tab) {
-  document.querySelectorAll(".tab").forEach(btn => btn.classList.remove("active"));
-  document.querySelectorAll(".settings-tab").forEach(tabDiv => tabDiv.classList.remove("active"));
+function showTrackTab(tab) {
+  document.querySelectorAll(".tab-switch .tab").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".track-tab").forEach(t => t.classList.remove("active"));
 
-  document.getElementById(`${tab}-settings`).classList.add("active");
   document.getElementById(`tab-${tab}`).classList.add("active");
+  document.getElementById(`${tab}-tab`).classList.add("active");
 }
 
 function toggleAudio() {
@@ -210,28 +251,3 @@ function returnHome() {
   window.location.href = "/";
 }
 
-const popup = document.getElementById("trackPopup");
-const popupName = document.getElementById("popupTrackName");
-const popupDesc = document.getElementById("popupDescription");
-
-document.querySelectorAll(".track-card").forEach((card, index) => {
-  card.addEventListener("click", () => {
-    const name = card.querySelector(".track-name").innerText;
-    const difficulty = card.querySelector(".track-difficulty").innerText;
-    popupName.innerText = name;
-    popupDesc.innerText = `This is a ${difficulty.toLowerCase()} track with unique challenges.`; // Placeholder
-    popup.style.display = "flex";
-    showTrackTab("info");
-  });
-});
-
-function closeTrackPopup() {
-  popup.style.display = "none";
-}
-
-function showTrackTab(tab) {
-  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-  document.querySelectorAll(".track-tab").forEach(t => t.classList.remove("active"));
-  document.getElementById(`tab-${tab}`).classList.add("active");
-  document.getElementById(`${tab}-tab`).classList.add("active");
-}

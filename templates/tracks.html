@@ -47,38 +47,50 @@
   <!-- Track Popup Modal -->
 <div id="trackPopup" class="modal">
     <div class="modal-content settings-box">
-      <h2 id="popupTrackName">TRACK NAME</h2>
-  
-      <div class="tab-switch">
-        <button id="tab-info" class="tab active" onclick="showTrackTab('info')">INFO</button>
-        <button id="tab-leaderboard" class="tab" onclick="showTrackTab('leaderboard')">LEADERBOARD</button>
-      </div>
-  
-      <!-- Info Section -->
-      <div id="info-tab" class="track-tab active">
-        <p id="popupDescription">Track description goes here...</p>
-        <div class="race-buttons">
-          <button class="race-btn pink">RACE BOT</button>
-          <button class="race-btn cyan">2 PLAYERS</button>
-          <button class="race-btn green">TIME TRIAL</button>
+      <div class="track-popup-layout">
+        <!-- LEFT: Image -->
+        <div class="popup-left">
+          <img id="popupTrackImage" src="/static/assets/default.png" alt="Track Image" />
+          <div class="popup-difficulty-tag easy-tag" id="popupTrackDifficulty">EASY</div>
+        </div>
+      
+        <!-- RIGHT: Content -->
+        <div class="popup-right">
+          <h2 id="popupTrackName">TRACK NAME</h2>
+      
+          <div class="tab-switch track-tab-switch">
+            <button id="tab-info" class="tab active" onclick="showTrackTab('info')">INFO</button>
+            <button id="tab-leaderboard" class="tab" onclick="showTrackTab('leaderboard')">LEADERBOARD</button>
+          </div>          
+      
+          <!-- Info Section -->
+          <div id="info-tab" class="track-tab active">
+            <p id="popupDescription">Track description goes here...</p>
+            <div class="race-buttons">
+              <button class="race-btn pink">RACE BOT</button>
+              <button class="race-btn cyan">2 PLAYERS</button>
+              <button class="race-btn green">TIME TRIAL</button>
+            </div>
+          </div>
+      
+          <!-- Leaderboard Section -->
+          <div id="leaderboard-tab" class="track-tab">
+            <table class="leaderboard-table">
+              <thead>
+                <tr><th>#</th><th>PLAYER</th><th>TIME</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>1</td><td>rush</td><td>1:02</td></tr>
+                <tr><td>2</td><td>neo</td><td>1:10</td></tr>
+              </tbody>
+            </table>
+            <button class="race-btn green">START TIME TRIAL</button>
+          </div>
+      
+          <button class="back-button" id="popupCloseButton">BACK</button>
         </div>
       </div>
-  
-      <!-- Leaderboard Section -->
-      <div id="leaderboard-tab" class="track-tab">
-        <table class="leaderboard-table">
-          <thead>
-            <tr><th>#</th><th>PLAYER</th><th>TIME</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>1</td><td>rush</td><td>1:02</td></tr>
-            <tr><td>2</td><td>neo</td><td>1:10</td></tr>
-          </tbody>
-        </table>
-        <button class="race-btn green">START TIME TRIAL</button>
-      </div>
-  
-      <button class="back-button" onclick="closeTrackPopup()">BACK</button>
+      
     </div>
   </div>
   
