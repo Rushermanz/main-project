@@ -5,11 +5,11 @@ pygame.mixer.init()
 
 # ======= Load Sound Effects =======
 idle_sound = pygame.mixer.Sound("assets/idle.wav")
-idle_sound.set_volume(1.0)  # back to normal volume
+idle_sound.set_volume(0.0)  # back to normal volume
 idle_sound.play(loops=-1)
 
 accelerate_sound = pygame.mixer.Sound("assets/accelerate.wav")
-accelerate_sound.set_volume(0.2)  # reduced volume
+accelerate_sound.set_volume(0.0)  # reduced volume
 
 collision_sound = pygame.mixer.Sound("assets/collision.wav")
 drs_sound = pygame.mixer.Sound("assets/drs.wav")
@@ -201,7 +201,7 @@ class CameraGroup(pygame.sprite.Group):
 pygame.init()
 
 pygame.mixer.music.load("assets/time_trial.mp3")  # make sure the file exists in /assets
-pygame.mixer.music.set_volume(0.5)
+pygame.mixer.music.set_volume(0.0)
 pygame.mixer.music.play(-1)
 
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
