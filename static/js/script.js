@@ -1,3 +1,5 @@
+// static/js/script.js
+
 // ========== Car Options ==========
 const cars = [
   "/static/assets/car.gif",
@@ -5,25 +7,26 @@ const cars = [
   "/static/assets/car3.gif"
 ];
 
-// ========== Global Background Music ==========
+// Track Slugs → DB IDs
+const TRACK_NAME_TO_ID = {
+  bahrain: 1,
+  baku: 2,
+  usa: 3,
+  spain: 4,
+  silverstone: 5
+};
+
+// ========== Music ==========
 if (!window.bgMusic) {
   window.bgMusic = new Audio("/static/assets/bg-music.mp3");
   bgMusic.loop = true;
   bgMusic.volume = 0.5;
 
   const musicEnabled = localStorage.getItem("musicEnabled");
-
-  if (musicEnabled === null) {
-    localStorage.setItem("musicEnabled", "true");
-    bgMusic.muted = false;
-  } else {
-    bgMusic.muted = musicEnabled === "false";
-  }
+  bgMusic.muted = musicEnabled === "false";
 
   if (!bgMusic.muted) {
-    const savedTime = parseFloat(sessionStorage.getItem("musicTime")) || 0;
-    bgMusic.currentTime = savedTime;
-
+    bgMusic.currentTime = parseFloat(sessionStorage.getItem("musicTime")) || 0;
     bgMusic.play().catch(() => {
       document.body.addEventListener("click", () => bgMusic.play(), { once: true });
     });
@@ -34,218 +37,226 @@ if (!window.bgMusic) {
   });
 }
 
-// ========== Save Player Name ==========
-function savePlayerName() {
-  const input = document.getElementById("playerNameInput") || document.getElementById("name-input");
-  const newName = input.value.trim() || "Player 1";
-
-  if (confirm(`Change name to "${newName}"?`)) {
-    sessionStorage.setItem("playerName", newName);
-
-    fetch("/save_name", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: newName })
-    })
-    .then(res => res.json())
-    .then(() => {
-      alert("Name updated!");
-      updatePlayerNameDisplay();
-      if (window.location.pathname.includes("profile")) {
-        window.location.href = "/";
-      }
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    bgMusic.pause();
+  } else if (localStorage.getItem("musicEnabled") !== "false") {
+    bgMusic.play().catch(() => {
+      document.body.addEventListener("click", () => bgMusic.play(), { once: true });
     });
   }
-}
-
-function updatePlayerNameDisplay() {
-  const display = document.getElementById("playerNameDisplay") || document.getElementById("player-name");
-  if (display) {
-    const savedName = sessionStorage.getItem("playerName") || "Player 1";
-    display.textContent = `Player: ${savedName}`;
-  }
-}
-
-// ========== Car Switch ==========
-function cycleCar() {
-  const currentCar = sessionStorage.getItem("selectedCar") || cars[0];
-  const index = cars.indexOf(currentCar);
-  const nextCar = cars[(index + 1) % cars.length];
-  sessionStorage.setItem("selectedCar", nextCar);
-
-  const carImg = document.getElementById("carImage");
-  if (carImg) carImg.src = nextCar;
-}
-
-// ========== Avatar Upload ==========
-function triggerAvatarUpload() {
-  document.getElementById("avatarUpload").click();
-}
-
-function loadAvatar() {
-  const avatarImg = document.getElementById("avatarImage") || document.getElementById("homeAvatar");
-  const storedAvatar = sessionStorage.getItem("avatarImage");
-  if (avatarImg) {
-    avatarImg.src = storedAvatar && storedAvatar !== "null"
-      ? storedAvatar
-      : "/static/assets/avatar.png";
-  }
-}
-
-const avatarInput = document.getElementById("avatarUpload");
-if (avatarInput) {
-  avatarInput.addEventListener("change", (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const base64Image = event.target.result;
-      sessionStorage.setItem("avatarImage", base64Image);
-      document.getElementById("avatarImage").src = base64Image;
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
-// ========== On Load ==========
-window.onload = () => {
-  const savedName = sessionStorage.getItem("playerName") || "Player 1";
-  const savedCar = sessionStorage.getItem("selectedCar") || cars[0];
-
-  const input = document.getElementById("playerNameInput") || document.getElementById("name-input");
-  if (input) input.value = savedName;
-
-  updatePlayerNameDisplay();
-
-  const carImg = document.getElementById("carImage");
-  if (carImg) carImg.src = savedCar;
-
-  const menuCar = document.querySelector(".car-gif");
-  if (menuCar) menuCar.src = savedCar;
-
-  loadAvatar();
-
-  // ========== TRACK POPUP LOGIC ==========
-  const popup = document.getElementById("trackPopup");
-  const popupName = document.getElementById("popupTrackName");
-  const popupDesc = document.getElementById("popupDescription");
-  const popupImg = document.getElementById("popupTrackImage");
-  const popupDiff = document.getElementById("popupTrackDifficulty");
-
-  document.querySelectorAll(".track-card").forEach(card => {
-    card.addEventListener("click", () => {
-      const name = card.querySelector(".track-name").innerText;
-      const difficulty = card.querySelector(".track-difficulty").innerText;
-      const imgSrc = card.querySelector("img").getAttribute("src");
-
-      popupName.innerText = name;
-      popupDesc.innerText = `This is a ${difficulty.toLowerCase()} track with unique challenges.`;
-      popupImg.src = imgSrc;
-      popupDiff.innerText = difficulty;
-
-      // Set class based on difficulty
-      popupDiff.className = "popup-difficulty-tag";
-      if (difficulty === "EASY") popupDiff.classList.add("easy-tag");
-      else if (difficulty === "MEDIUM") popupDiff.classList.add("medium-tag");
-      else popupDiff.classList.add("hard-tag");
-
-      popup.style.display = "flex";
-      showTrackTab("info");
-    });
-  });
-
-};
+});
 
 // ========== Navigation ==========
-function openProfile() {
-  window.location.href = "profile.html";
-}
+function openProfile()   { window.location.href = "/profile"; }
+function openPlay()      { window.location.href = "/tracks"; }
+function returnHome()    { window.location.href = "/"; }
+function closeTab()      { alert("Please close this tab manually."); }
 
-function openPlay() {
-  window.location.href = "/tracks";
-}
-
-// ========== Settings ==========
 function openSettings() {
-  document.getElementById("settingsModal").style.display = "flex";
-  const toggle = document.getElementById("audioToggle");
-  const musicSetting = localStorage.getItem("musicEnabled");
-  toggle.checked = musicSetting === null || musicSetting !== "false";
+  const modal = document.getElementById("settingsModal");
+  if (modal) modal.style.display = "flex";
 }
-
 function closeSettings() {
-  document.getElementById("settingsModal").style.display = "none";
+  const modal = document.getElementById("settingsModal");
+  if (modal) modal.style.display = "none";
 }
-
-
 function showSettingsTab(tab) {
-  document.querySelectorAll(".tab-switch .tab").forEach(button => button.classList.remove("active"));
-  document.querySelectorAll(".settings-tab").forEach(tabDiv => tabDiv.classList.remove("active"));
-  document.getElementById(`tab-${tab}`).classList.add("active");
-  document.getElementById(`${tab}-settings`).classList.add("active");
+  document.querySelectorAll(".tab-switch .tab").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".settings-tab").forEach(c => c.classList.remove("active"));
+  document.getElementById(`tab-${tab}`)?.classList.add("active");
+  document.getElementById(`${tab}-settings`)?.classList.add("active");
 }
-
-
 function toggleAudio() {
-  const isEnabled = document.getElementById("audioToggle").checked;
-  localStorage.setItem("musicEnabled", isEnabled);
-  bgMusic.muted = !isEnabled;
-
-  if (isEnabled) {
-    bgMusic.play();
-  } else {
-    bgMusic.pause();
-  }
+  const toggle = document.getElementById("audioToggle");
+  if (!toggle) return;
+  const isOn = toggle.checked;
+  localStorage.setItem("musicEnabled", isOn);
+  bgMusic.muted = !isOn;
+  isOn ? bgMusic.play() : bgMusic.pause();
 }
 
 // ========== Quit ==========
 function quitGame() {
-  if (confirm("Are you sure you want to quit and reset your profile?")) {
-    sessionStorage.setItem("playerName", "Player 1");
-    sessionStorage.setItem("selectedCar", "/static/assets/car.gif");
-    sessionStorage.removeItem("avatarImage");
-    sessionStorage.removeItem("musicTime");
+  if (!confirm("Quit and reset your profile?")) return;
 
-    localStorage.removeItem("musicEnabled");
+  sessionStorage.setItem("playerName", "Player 1");
+  sessionStorage.setItem("selectedCar", cars[0]);
+  sessionStorage.removeItem("avatarImage");
+  sessionStorage.removeItem("musicTime");
+  localStorage.removeItem("musicEnabled");
 
-    fetch("/save_name", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: "Player 1" })
+  fetch("/save_name", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name: "Player 1" })
+  });
+
+  const modal = document.getElementById("quitModal");
+  if (modal) modal.style.display = "flex";
+
+  updatePlayerNameDisplay();
+  loadAvatar();
+
+  const input = document.getElementById("playerNameInput") || document.getElementById("name-input");
+  if (input) input.value = "Player 1";
+
+  const carImg = document.getElementById("carImage");
+  if (carImg) carImg.src = cars[0];
+
+  const menuCar = document.querySelector(".car-gif");
+  if (menuCar) menuCar.src = cars[0];
+}
+
+// ========== Profile ==========
+function updatePlayerNameDisplay() {
+  const el = document.getElementById("playerNameDisplay") || document.getElementById("player-name");
+  if (el) el.textContent = `Player: ${sessionStorage.getItem("playerName") || "Player 1"}`;
+}
+
+function savePlayerName() {
+  const input = document.getElementById("playerNameInput") || document.getElementById("name-input");
+  if (!input) return;
+
+  const newName = input.value.trim() || "Player 1";
+  if (!confirm(`Change name to "${newName}"?`)) return;
+
+  sessionStorage.setItem("playerName", newName);
+  fetch("/save_name", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name: newName })
+  }).then(res => res.json())
+    .then(() => {
+      alert("Name updated!");
+      updatePlayerNameDisplay();
+      if (window.location.pathname.includes("profile")) window.location.href = "/";
     });
-
-    document.getElementById("quitModal").style.display = "flex";
-
-    updatePlayerNameDisplay();
-    loadAvatar();
-
-    const input = document.getElementById("playerNameInput") || document.getElementById("name-input");
-    if (input) input.value = "Player 1";
-
-    const carImg = document.getElementById("carImage");
-    if (carImg) carImg.src = "/static/assets/car.gif";
-
-    const menuCar = document.querySelector(".car-gif");
-    if (menuCar) menuCar.src = "/static/assets/car.gif";
-  }
 }
 
-function closeTab() {
-  alert("Please close this tab manually.");
+function cycleCar() {
+  const current = sessionStorage.getItem("selectedCar") || cars[0];
+  const next = cars[(cars.indexOf(current) + 1) % cars.length];
+  sessionStorage.setItem("selectedCar", next);
+  const img = document.getElementById("carImage");
+  if (img) img.src = next;
+  const menu = document.querySelector(".car-gif");
+  if (menu) menu.src = next;
 }
 
-function returnHome() {
-  window.location.href = "/";
+function triggerAvatarUpload() {
+  document.getElementById("avatarUpload")?.click();
 }
-// ========== Track Popup ==========
+function loadAvatar() {
+  const avatar = sessionStorage.getItem("avatarImage");
+  const img = document.getElementById("avatarImage") || document.getElementById("homeAvatar");
+  if (img) img.src = avatar && avatar !== "null" ? avatar : "/static/assets/avatar.png";
+}
+
+// ========== Avatar Upload ==========
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("avatarUpload")?.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      sessionStorage.setItem("avatarImage", ev.target.result);
+      const img = document.getElementById("avatarImage");
+      if (img) img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+});
+
+// ========== Leaderboard ==========
+function loadLeaderboard(trackId) {
+  fetch(`/leaderboard/${trackId}`)
+    .then(r => r.json())
+    .then(data => {
+      const tbody = document.querySelector("#leaderboard-tab table tbody");
+      if (!tbody) return;
+      tbody.innerHTML = "";
+      data.forEach((entry, i) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${i + 1}</td><td>${entry.player}</td><td>${entry.lap_time.toFixed(2)}s</td>`;
+        tbody.appendChild(row);
+      });
+    });
+}
+
+// ========== Track Modal ==========
 function showTrackTab(tab) {
   document.querySelectorAll(".track-tab-switch .tab").forEach(btn => btn.classList.remove("active"));
-  document.querySelectorAll(".track-tab").forEach(tabDiv => tabDiv.classList.remove("active"));
-  document.getElementById(`tab-${tab}`).classList.add("active");
-  document.getElementById(`${tab}-tab`).classList.add("active");
-}
+  document.querySelectorAll(".track-tab").forEach(div => div.classList.remove("active"));
+  document.getElementById(`tab-${tab}`)?.classList.add("active");
+  document.getElementById(`${tab}-tab`)?.classList.add("active");
 
+  if (tab === "leaderboard") {
+    const name = document.getElementById("popupTrackName").innerText.trim().toLowerCase();
+    loadLeaderboard(TRACK_NAME_TO_ID[name]);
+  }
+}
 function closeTrackPopup() {
   document.getElementById("trackPopup").style.display = "none";
 }
+
+// ========== Game Launcher ==========
+document.addEventListener("click", e => {
+  const btn = e.target.closest(".race-btn");
+  if (!btn) return;
+
+  const { track, mode } = btn.dataset;
+  if (!track || !mode) return;
+
+  sessionStorage.setItem("musicTime", bgMusic.currentTime);
+  bgMusic.pause();
+
+  fetch("/start_game", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ track, mode })
+  }).then(res => {
+    if (res.ok) alert(`Launching ${mode.replace("_", " ").toUpperCase()} on ${track.toUpperCase()}!`);
+    else alert("Game launch failed.");
+  }).catch(() => alert("Error launching game."));
+});
+
+// ========== Init ========== 
+document.addEventListener("DOMContentLoaded", () => {
+  updatePlayerNameDisplay();
+  loadAvatar();
+
+  const savedCar = sessionStorage.getItem("selectedCar") || cars[0];
+  document.getElementById("carImage")?.setAttribute("src", savedCar);
+  document.querySelector(".car-gif")?.setAttribute("src", savedCar);
+
+  const input = document.getElementById("playerNameInput") || document.getElementById("name-input");
+  if (input) input.value = sessionStorage.getItem("playerName") || "Player 1";
+
+  document.querySelectorAll(".track-card").forEach(card => {
+    card.addEventListener("click", () => {
+      const name = card.querySelector(".track-name").innerText.trim();
+      const difficulty = card.querySelector(".track-difficulty").innerText;
+      const img = card.querySelector("img").getAttribute("src");
+      const slug = name.toLowerCase();
+
+      document.getElementById("popupTrackName").innerText = name;
+      document.getElementById("popupTrackImage").src = img;
+      document.getElementById("popupDescription").innerText = `This is a ${difficulty.toLowerCase()} track with unique challenges.`;
+
+      const diffEl = document.getElementById("popupTrackDifficulty");
+      diffEl.innerText = difficulty;
+      diffEl.className = `popup-difficulty-tag ${difficulty.toLowerCase()}-tag`;
+
+      document.querySelectorAll(".race-btn").forEach(btn => {
+        btn.dataset.track = slug;
+        btn.dataset.mode = btn.classList.contains("pink") ? "race_bot"
+                          : btn.classList.contains("cyan") ? "two_player"
+                          : "time_trial";
+      });
+
+      document.getElementById("trackPopup").style.display = "flex";
+      showTrackTab("info");
+    });
+  });
+});

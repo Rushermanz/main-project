@@ -14,65 +14,67 @@
 
   <div class="track-grid">
     <div class="track-card easy">
-      <img src="/static/assets/Bahrain_Circuit.png" alt="BAHRAIN Circuit">
+      <img src="{{ url_for('static', filename='assets/Bahrain_Circuit.png') }}" alt="BAHRAIN Circuit">
       <div class="track-name">BAHRAIN</div>
       <span class="track-difficulty easy-tag">EASY</span>
     </div>
 
     <div class="track-card medium">
-      <img src="/static/assets/Baku_Circuit.png" alt="BAKU Circuit">
+      <img src="{{ url_for('static', filename='assets/Baku_Circuit.png') }}" alt="BAKU Circuit">
       <div class="track-name">BAKU</div>
       <span class="track-difficulty medium-tag">MEDIUM</span>
     </div>
 
     <div class="track-card hard">
-      <img src="/static/assets/USA_Circuit.png" alt="USA Circuit">
+      <img src="{{ url_for('static', filename='assets/USA_Circuit.png') }}" alt="USA Circuit">
       <div class="track-name">USA</div>
       <span class="track-difficulty hard-tag">HARD</span>
     </div>
 
     <div class="track-card medium">
-      <img src="/static/assets/Spain_Circuit.png" alt="BAHRAIN Circuit">
-      <div class="track-name">Spain</div>
+      <img src="{{ url_for('static', filename='assets/Spain_Circuit.png') }}" alt="SPAIN Circuit">
+      <div class="track-name">SPAIN</div>
       <span class="track-difficulty medium-tag">MEDIUM</span>
     </div>
 
     <div class="track-card hard">
-      <img src="/static/assets/Silverstone_Circuit.png" alt="SILVERSTONE Circuit">
+      <img src="{{ url_for('static', filename='assets/Silverstone_Circuit.png') }}" alt="SILVERSTONE Circuit">
       <div class="track-name">SILVERSTONE</div>
       <span class="track-difficulty hard-tag">HARD</span>
     </div>
   </div>
 
   <!-- Track Popup Modal -->
-<div id="trackPopup" class="modal">
+  <div id="trackPopup" class="modal">
     <div class="modal-content settings-box">
       <div class="track-popup-layout">
+
         <!-- LEFT: Image -->
         <div class="popup-left">
-          <img id="popupTrackImage" src="/static/assets/default.png" alt="Track Image" />
+          <!-- default to Bahrain image until JS swaps it out -->
+          <img id="popupTrackImage" src="{{ url_for('static', filename='assets/Bahrain_Circuit.png') }}" alt="Track Image" />
           <div class="popup-difficulty-tag easy-tag" id="popupTrackDifficulty">EASY</div>
         </div>
-      
+
         <!-- RIGHT: Content -->
         <div class="popup-right">
-          <h2 id="popupTrackName">TRACK NAME</h2>
-      
+          <h2 id="popupTrackName">BAHRAIN</h2>
+
           <div class="tab-switch track-tab-switch">
             <button id="tab-info" class="tab active" onclick="showTrackTab('info')">INFO</button>
             <button id="tab-leaderboard" class="tab" onclick="showTrackTab('leaderboard')">LEADERBOARD</button>
-          </div>          
-      
+          </div>
+
           <!-- Info Section -->
           <div id="info-tab" class="track-tab active">
-            <p id="popupDescription">Track description goes here...</p>
+            <p id="popupDescription">This is a easy track with unique challenges.</p>
             <div class="race-buttons">
-              <button class="race-btn pink">RACE BOT</button>
-              <button class="race-btn cyan">2 PLAYERS</button>
-              <button class="race-btn green">TIME TRIAL</button>
+              <button class="race-btn pink"    data-mode="bot"         data-track="">RACE BOT</button>
+              <button class="race-btn cyan"    data-mode="pvp"         data-track="">2 PLAYERS</button>
+              <button class="race-btn green"   data-mode="time_trial"  data-track="">TIME TRIAL</button>
             </div>
           </div>
-      
+
           <!-- Leaderboard Section -->
           <div id="leaderboard-tab" class="track-tab">
             <table class="leaderboard-table">
@@ -80,21 +82,21 @@
                 <tr><th>#</th><th>PLAYER</th><th>TIME</th></tr>
               </thead>
               <tbody>
-                <tr><td>1</td><td>rush</td><td>1:02</td></tr>
-                <tr><td>2</td><td>neo</td><td>1:10</td></tr>
+                <!-- JS will fill this in -->
               </tbody>
             </table>
-            <button class="race-btn green">START TIME TRIAL</button>
+            <button class="race-btn green"
+                    data-mode="time_trial"
+                    data-track="">START TIME TRIAL</button>
           </div>
-      
+
           <button class="back-button" onclick="closeTrackPopup()">BACK</button>
         </div>
       </div>
-      
     </div>
   </div>
-  
 
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
 </body>
 </html>
