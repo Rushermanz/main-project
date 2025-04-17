@@ -26,12 +26,12 @@ class Track(pygame.sprite.Sprite):
 class Red_car(pygame.sprite.Sprite):
     def __init__(self, pos, group):
         super().__init__(group)
-        self.original_image = scale_image(pygame.image.load('assets/red_car.png').convert_alpha(), 1.1)
+        self.original_image = scale_image(pygame.image.load('assets/red_car.png').convert_alpha(), 1.3)
         self.image = self.original_image
         self.rect = self.image.get_rect(center=pos)
         self.mask = pygame.mask.from_surface(self.image)
         self.pos = pygame.Vector2(pos)
-        self.angle = 90
+        self.angle = 255
         self.speed = 0
         self.acceleration = 0.05
         self.max_speed = 8
@@ -105,9 +105,9 @@ class CameraGroup(pygame.sprite.Group):
         self.drs_mask = pygame.mask.from_surface(self.drs_surface)
 
         self.finish_img = pygame.transform.rotate(
-            scale_image(pygame.image.load('assets/finish.png').convert_alpha(), 1.9), 90
+            scale_image(pygame.image.load('assets/finish.png').convert_alpha(), 2.2), 255
         )
-        self.finish_rect = self.finish_img.get_rect(center=(4657, 4083))
+        self.finish_rect = self.finish_img.get_rect(center=(1793, 5755))
         self.finish_mask = pygame.mask.from_surface(self.finish_img)
 
         self.start_time = 0
@@ -211,7 +211,7 @@ font = pygame.font.Font(None, 36)
 start_ticks = pygame.time.get_ticks()
 
 camera_group = CameraGroup()
-player = Red_car((2448, 5953), camera_group)
+player = Red_car((2470, 5901), camera_group)
 
 # ======= Game Loop =======
 while True:
