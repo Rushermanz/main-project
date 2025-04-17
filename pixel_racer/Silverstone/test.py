@@ -19,22 +19,22 @@ drs_sound = pygame.mixer.Sound("assets/drs.wav")
 class Track(pygame.sprite.Sprite):
     def __init__(self, pos, group):
         super().__init__(group)
-        self.image = scale_image(pygame.image.load('assets/bahrain.png').convert_alpha(), 2.7)
+        self.image = scale_image(pygame.image.load('assets/british.png').convert_alpha(), 8.7)
         self.rect = self.image.get_rect(topleft=pos)
 
 # ======= Player Car Class =======
 class Red_car(pygame.sprite.Sprite):
     def __init__(self, pos, group):
         super().__init__(group)
-        self.original_image = scale_image(pygame.image.load('assets/red_car.png').convert_alpha(), 0.9)
+        self.original_image = scale_image(pygame.image.load('assets/red_car.png').convert_alpha(), 1.1)
         self.image = self.original_image
         self.rect = self.image.get_rect(center=pos)
         self.mask = pygame.mask.from_surface(self.image)
         self.pos = pygame.Vector2(pos)
-        self.angle = 90
+        self.angle = 215
         self.speed = 0
         self.acceleration = 0.05
-        self.max_speed = 8
+        self.max_speed = 6.7
         self.original_max_speed = self.max_speed
         self.deceleration = 0.06
         self.turn_speed = 1.5
@@ -94,20 +94,20 @@ class CameraGroup(pygame.sprite.Group):
         self.half_h = self.display_surface.get_height() // 2
         self.recently_crossed = False
 
-        self.track_surface = scale_image(pygame.image.load('assets/bahrain.png').convert_alpha(), 2.7)
+        self.track_surface = scale_image(pygame.image.load('assets/british.png').convert_alpha(), 8.7)
         self.track_rect = self.track_surface.get_rect(topleft=(0, 0))
-        self.border_surface = scale_image(pygame.image.load('assets/bahrain_border.png').convert_alpha(), 2.7)
+        self.border_surface = scale_image(pygame.image.load('assets/british_border.png').convert_alpha(), 8.7)
         self.border_rect = self.border_surface.get_rect(topleft=(0, 0))
         self.border_mask = pygame.mask.from_surface(self.border_surface)
 
-        self.drs_surface = scale_image(pygame.image.load('assets/bahrain_drs.png').convert_alpha(), 2.7)
+        self.drs_surface = scale_image(pygame.image.load('assets/british_drs.png').convert_alpha(), 8.7)
         self.drs_rect = self.drs_surface.get_rect(topleft=(0, 0))
         self.drs_mask = pygame.mask.from_surface(self.drs_surface)
 
         self.finish_img = pygame.transform.rotate(
-            scale_image(pygame.image.load('assets/finish.png').convert_alpha(), 1.9), 90
+            scale_image(pygame.image.load('assets/finish.png').convert_alpha(), 1.9), 215
         )
-        self.finish_rect = self.finish_img.get_rect(center=(4657, 4083))
+        self.finish_rect = self.finish_img.get_rect(center=(2800, 821))
         self.finish_mask = pygame.mask.from_surface(self.finish_img)
 
         self.start_time = 0
@@ -211,7 +211,7 @@ font = pygame.font.Font(None, 36)
 start_ticks = pygame.time.get_ticks()
 
 camera_group = CameraGroup()
-player = Red_car((3760, 4028), camera_group)
+player = Red_car((3103, 1325), camera_group)
 
 # ======= Game Loop =======
 while True:
