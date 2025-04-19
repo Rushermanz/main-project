@@ -4,6 +4,14 @@ import pygame, sys, math, time
 import requests
 from utils import scale_image
 
+# ======= Load Player Name from current_player.json =======
+try:
+    with open("current_player.json") as f:
+        player_name = f.read().strip()
+except:
+    player_name = "Player 1"
+
+
 # ======= Sound Setup =======
 pygame.mixer.init()
 idle_sound      = pygame.mixer.Sound("assets/idle.wav");      idle_sound.set_volume(1.0); idle_sound.play(loops=-1)
@@ -174,11 +182,13 @@ class CameraGroup(pygame.sprite.Group):
                     requests.post(
                         'http://127.0.0.1:5000/submit_time',
                         json={
-                          'track_id': 1,               # Bahrain=1
-                          'lap_time': round(self.lap_time,2)
+                        'track_id': 1,
+                        'lap_time': round(self.lap_time,2),
+                        'player_name': player_name
                         },
                         timeout=2
                     )
+
                 except Exception:
                     pass
 

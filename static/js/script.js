@@ -216,6 +216,22 @@ document.addEventListener("click", e => {
 });
 
 function launchGame(track, mode) {
+  const name = sessionStorage.getItem("playerName") || "Player 1";
+
+  // Send player name to temporary file via backend
+  fetch("/set_current_player", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name })
+  });
+
+  fetch("/start_game", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ track, mode })
+  })
+
+
   fetch("/start_game", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -263,7 +279,7 @@ document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll(".race-btn").forEach(btn => {
         btn.dataset.track = slug;
         btn.dataset.mode = btn.classList.contains("pink") ? "race_bot"
-                          : btn.classList.contains("cyan") ? "two_player"
+                          : btn.classList.contains("cyan") ? "pvp"
                           : "time_trial";
       });
 

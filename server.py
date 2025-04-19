@@ -113,6 +113,15 @@ def get_leaderboard(track_id):
     ]
     return jsonify(result)
 
+@app.route('/set_current_player', methods=['POST'])
+def set_current_player():
+    data = request.get_json() or {}
+    name = data.get("name", "Player 1")
+    with open("current_player.json", "w") as f:
+        f.write(name)
+    return jsonify({'status': 'ok'})
+
+
 if __name__ == '__main__':
     app.run(debug=True)
 
