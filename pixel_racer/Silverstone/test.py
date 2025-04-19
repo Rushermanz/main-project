@@ -232,7 +232,7 @@ font = pygame.font.Font(None, 36)
 start_ticks = pygame.time.get_ticks()
 
 camera_group = CameraGroup()
-player = Red_car((3103, 1325), camera_group)
+player = Red_car((2964,1127), camera_group)
 recorder = MovementRecorder()
 
 
