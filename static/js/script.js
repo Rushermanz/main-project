@@ -201,6 +201,7 @@ function closeTrackPopup() {
 }
 
 // ========== Game Launcher ==========
+
 document.addEventListener("click", e => {
   const btn = e.target.closest(".race-btn");
   if (!btn) return;
@@ -211,15 +212,26 @@ document.addEventListener("click", e => {
   sessionStorage.setItem("musicTime", bgMusic.currentTime);
   bgMusic.pause();
 
+  launchGame(track, mode);
+});
+
+function launchGame(track, mode) {
   fetch("/start_game", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ track, mode })
-  }).then(res => {
-    if (res.ok) alert(`Launching ${mode.replace("_", " ").toUpperCase()} on ${track.toUpperCase()}!`);
-    else alert("Game launch failed.");
-  }).catch(() => alert("Error launching game."));
-});
+  })
+    .then(res => {
+      if (res.ok) {
+        const label = mode.replace(/_/g, " ").toUpperCase();
+        alert(`Launching ${label} on ${track.toUpperCase()}!`);
+      } else {
+        alert("Game launch failed.");
+      }
+    })
+    .catch(() => alert("Error launching game."));
+}
+
 
 // ========== Init ========== 
 document.addEventListener("DOMContentLoaded", () => {

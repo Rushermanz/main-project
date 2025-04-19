@@ -1,6 +1,6 @@
 # File: pixel_racer/Bahrain/race_bot.py
 
-import pygame, sys, math, time, json
+import pygame, sys, math, time
 from utils import scale_image
 
 # ========== Initialize Sound ========== #
@@ -44,23 +44,6 @@ class Car(pygame.sprite.Sprite):
         self.pos = self.last_pos
         self.rect.center = self.pos
         self.speed = 0
-    
-    def get_total_progress(self):
-        laps_done = getattr(self, "lap_count", 1)
-
-        # If the car is a replay bot (has `frame` and `data`)
-        if hasattr(self, "frame") and hasattr(self, "data"):
-            total_frames = len(self.data)
-            lap_progress = min(self.frame / total_frames, 1.0)
-        else:
-            # Approximate player progress by distance from start to finish
-            finish = pygame.Vector2(4657, 4083)
-            max_distance = 5000  # Approximate lap length
-            lap_progress = 1.0 - (self.pos.distance_to(finish) / max_distance)
-            lap_progress = max(0.0, min(1.0, lap_progress))
-
-        return (laps_done - 1) + lap_progress
-
 
 # ========== Player & Bot ========== #
 class PlayerCar(Car):
@@ -96,82 +79,103 @@ class PlayerCar(Car):
     def rollback(self):
         super().rollback()
         collision_sound.play()
-    
 
-
-
-# ========== Ghost Replay Bot ========== #
-class GhostBotCar(Car):
-    def __init__(self, group, data, image_path, start_pos):
-        first = data[0]
-        super().__init__(start_pos, group, image_path, angle=90)
-        self.data = data
-        self.frame = 0
-        self.lap_count = 1
-        self.total_laps = 3
-        self.finished = False
-
-
-        # Calculate position difference between where we WANT it to start vs JSON origin
-        json_start = pygame.Vector2(first["x"], first["y"])
-        self.offset = pygame.Vector2(start_pos) - json_start
-
-        # Force correct orientation on spawn
+class BotCar(Car):
+    def __init__(self, pos, group, img, waypoints, total_laps=3):
+        super().__init__(pos, group, img)
+        self.waypoints = waypoints
+        self.current_wp = 0
         self.image = pygame.transform.rotate(self.original_image, self.angle)
         self.rect = self.image.get_rect(center=self.rect.center)
-        self.mask = pygame.mask.from_surface(self.image)
+        self.lap_count = 1
+        self.total_laps = total_laps
+          # slightly slower than player
 
     def update(self):
-        if countdown_timer > 0 or camera_group.show_result or self.finished:
+        if countdown_timer > 0 or camera_group.show_result:
             return
 
-        if self.frame >= len(self.data):
-            self.finished = True
-            return
+        current_target = pygame.Vector2(self.waypoints[self.current_wp])
+        next_idx = (self.current_wp + 1) % len(self.waypoints)
+        after_next_idx = (self.current_wp + 2) % len(self.waypoints)
+        next_target = pygame.Vector2(self.waypoints[next_idx])
+        after_next = pygame.Vector2(self.waypoints[after_next_idx])
 
-        d = self.data[self.frame]
-        replay_pos = pygame.Vector2(d["x"], d["y"]) + self.offset
-        self.pos = replay_pos
-        self.angle = d["angle"]
-        self.speed = d["speed"]
+        # --- Steering ---
+        to_target = current_target - self.pos
+        desired_angle = math.degrees(math.atan2(-to_target.y, to_target.x)) - 90
+        angle_diff = (desired_angle - self.angle + 180) % 360 - 180
+        self.angle += max(min(angle_diff, self.turn_speed), -self.turn_speed)
 
-        self.rect.center = self.pos
-        self.image = pygame.transform.rotate(self.original_image, self.angle)
-        self.rect = self.image.get_rect(center=self.rect.center)
-        self.mask = pygame.mask.from_surface(self.image)
-        self.frame += 1
+        # --- Curve Prediction ---
+        vec1 = next_target - current_target
+        vec2 = after_next - next_target
+        curve_angle = abs(vec1.angle_to(vec2))
+        alignment_penalty = abs(angle_diff)
 
-        # Lap detection
-        foff = (int(self.rect.left - camera_group.finish_rect.left),
-                int(self.rect.top - camera_group.finish_rect.top))
-        crossed = camera_group.finish_mask.overlap(self.mask, foff)
-        if crossed and not getattr(self, "last_cross", False):
-            self.lap_count += 1
-        self.last_cross = bool(crossed)
-    
-    def get_total_progress(self):
-        lap_progress = self.frame / len(self.data)
-        return (self.lap_count - 1) + lap_progress
+        # --- STRAIGHT BOOST LOGIC ---
+        if curve_angle < 10 and alignment_penalty < 10:
+            target_speed = 10.0   # Max straight speed
+            acceleration = 0.15   # Rapid acceleration on straights
+        elif curve_angle < 25 and alignment_penalty < 15:
+            target_speed = 8.0
+            acceleration = 0.09
+        elif curve_angle > 100 or alignment_penalty > 90:
+            target_speed = 2.5
+            acceleration = 0.035
+        elif curve_angle > 60 or alignment_penalty > 60:
+            target_speed = 4.0
+            acceleration = 0.045
+        elif curve_angle > 30 or alignment_penalty > 45:
+            target_speed = 6.0
+            acceleration = 0.055
+        else:
+            target_speed = self.max_speed + 1.5
+            acceleration = 0.07
+
+        # --- Acceleration / Deceleration ---
+        if self.speed < target_speed:
+            self.speed = min(self.speed + acceleration, target_speed)
+        else:
+            self.speed = max(self.speed - self.deceleration, target_speed)
+
+        self.move()
+
+        # --- Waypoint Advance ---
+        if to_target.length() < 70:
+            self.current_wp = (self.current_wp + 1) % len(self.waypoints)
+            if self.current_wp == 0:
+                self.lap_count += 1
 
 
 
 
-with open("bahrain_bot1_run.json") as f1, \
-     open("bahrain_bot2_run.json") as f2, \
-     open("bahrain_bot3_run.json") as f3:
-    ghost_data1 = json.load(f1)
-    ghost_data2 = json.load(f2)
-    ghost_data3 = json.load(f3)
 
 
+
+        # Advance Waypoint if Close Enough
+        if (current_target - self.pos).length() < 70:
+            self.current_wp = (self.current_wp + 1) % len(self.waypoints)
+            if self.current_wp == 0:
+                self.lap_count += 1
+
+
+
+
+    def avoid_collision(self, others):
+        for other in others:
+            if other != self and pygame.sprite.collide_mask(self, other):
+                self.rollback()
 
 
 
 # ========== Ranking Logic ========== #
 def get_race_positions(cars):
-    return sorted(cars, key=lambda c: c.get_total_progress(), reverse=True)
-
-
+    def progress(c):
+        wp = min(c.current_wp, len(bot1.waypoints)-1)
+        dist = pygame.Vector2(bot1.waypoints[wp]).distance_to(c.pos)
+        return wp - dist / 1000  # closer = higher
+    return sorted(cars, key=progress, reverse=True)
 
 # ========== Camera Group ========== #
 class CameraGroup(pygame.sprite.Group):
@@ -203,7 +207,6 @@ class CameraGroup(pygame.sprite.Group):
         self.total_laps = 3
         self.lap_times = []
         self.show_result = False
-        
 
     def center_target_camera(self, target):
         self.offset.x = target.rect.centerx - self.half_w
@@ -267,7 +270,6 @@ class CameraGroup(pygame.sprite.Group):
         pos = get_race_positions(all_cars).index(player) + 1
         self.display_surface.blit(font.render(f"Position: {pos}/{len(all_cars)}", True, (255,255,0)), (WIDTH-220, HEIGHT-40))
 
-
         # Countdown / GO!
         if countdown_timer > 0:
             cd = font.render(f"{int(countdown_timer)+1}", True, (255,0,0))
@@ -275,13 +277,6 @@ class CameraGroup(pygame.sprite.Group):
         elif show_go and not self.show_result:
             go = font.render("GO!", True, (0,255,0))
             self.display_surface.blit(go, (WIDTH//2 - go.get_width()//2, HEIGHT//2 - 50))
-            
-        # Check if player and all bots have finished 3 laps
-        if not self.show_result and self.current_lap > self.total_laps:
-            all_bots_done = all(bot.lap_count > bot.total_laps for bot in bots)
-            if all_bots_done:
-                self.show_result = True
-
 
         # Result screen
         if self.show_result:
@@ -307,13 +302,11 @@ start_ticks = pygame.time.get_ticks()
 
 camera_group = CameraGroup()
 player = PlayerCar((4204, 4135), camera_group)
-ghost_bot1 = GhostBotCar(camera_group, ghost_data1, "assets/white_car.png", start_pos=(3760, 4028))
-ghost_bot2 = GhostBotCar(camera_group, ghost_data2, "assets/purple_car.png", start_pos=(3915, 4137))
-ghost_bot3 = GhostBotCar(camera_group, ghost_data3, "assets/grey_car.png", start_pos=(4050, 4033))
-bots = [ghost_bot1, ghost_bot2, ghost_bot3]
+bot1 = BotCar((3760, 4028), camera_group, "assets/purple_car.png", [(2145,4063), (599,4121), (371,4012), (527,3802), (673,3631), (571,3361), (548,2935), (842,604), (971,399), (1252,521), (1642,960), (2120,1290), (2379,1496), (2322,1948), (2916,2447), (3258,2772), (3099,2881), (2499,2760), (1618,2684), (1260,2914), (1285,3066), (1718,3102), (3083,3125), (4376,3121), (4629,2959), (4574,2667), (4144,2288), (3640,2016), (3517,1580), (3691,1101), (3942,735), (4154,700), (4330,906), (5551,2898), (6010,3646), (6100,3867), (5749,4059), (4761,4076)])
+#bot2 = BotCar((3915, 4137), camera_group, "assets/grey_car.png",   [(3094,4035), (1896,4076), (861,4088), (451,4059), (373,3961), (512,3813), (666,3684), (583,3373), (568,2883), (600,2268), (743,1139), (825,646), (959,384), (1265,499), (1588,912), (1925,1209), (2255,1382), (2332,1558), (2325,1838), (2470,2111), (2875,2428), (3135,2625), (3256,2776), (3137,2891), (2695,2785), (1975,2704), (1436,2730), (1250,2944), (1362,3107), (1663,3116), (2548,3129), (3397,3131), (4267,3147), (4553,3094), (4601,2848), (4517,2596), (4237,2350), (3820,2160), (3590,1962), (3540,1494), (3743,1013), (3941,752), (4111,694), (4247,826), (4465,1136), (4740,1596), (5026,2070), (5444,2731), (5940,3562), (6096,3782), (6016,3960), (5763,4073), (5309,4083), (4407,4081), (3629,4099)])
+#bot3 = BotCar((4050, 4033), camera_group, "assets/white_car.png",  [(3094,4035), (1896,4076), (861,4088), (451,4059), (373,3961), (512,3813), (666,3684), (583,3373), (568,2883), (600,2268), (743,1139), (825,646), (959,384), (1265,499), (1588,912), (1925,1209), (2255,1382), (2332,1558), (2325,1838), (2470,2111), (2875,2428), (3135,2625), (3256,2776), (3137,2891), (2695,2785), (1975,2704), (1436,2730), (1250,2944), (1362,3107), (1663,3116), (2548,3129), (3397,3131), (4267,3147), (4553,3094), (4601,2848), (4517,2596), (4237,2350), (3820,2160), (3590,1962), (3540,1494), (3743,1013), (3941,752), (4111,694), (4247,826), (4465,1136), (4740,1596), (5026,2070), (5444,2731), (5940,3562), (6096,3782), (6016,3960), (5763,4073), (5309,4083), (4407,4081), (3629,4099)])
+bots = [bot1,]
 camera_group.add(player, *bots)
-
-
 
 # ========== Main Loop ========== #
 while True:
@@ -322,16 +315,8 @@ while True:
             pygame.quit(); sys.exit()
         if camera_group.show_result and e.type == pygame.KEYDOWN and e.key == pygame.K_RETURN:
             player.pos = pygame.Vector2(4204, 4135); player.angle = 90; player.speed = 0
-            reset_positions = [(3760, 4028), (3915, 4137), (4050, 4033)]
-            for bot, pos in zip(bots, reset_positions):
-                bot.pos = pygame.Vector2(pos)
-                bot.rect.center = pos
-                bot.angle = 90
-                bot.speed = 0
-                bot.frame = 0
-                bot.lap_count = 1
-
-
+            for bot in bots:
+                bot.current_wp = 0; bot.speed = 0; bot.pos = pygame.Vector2(bot.rect.center); bot.angle = 90
             camera_group.current_lap = 1
             camera_group.lap_times = []
             camera_group.lap_started = False
