@@ -1,32 +1,50 @@
-import pygame, sys, math, time
+import pygame, sys, math, time, json
 from utils import scale_image
 
 pygame.mixer.init()
+waypoints = []
 
 # ======= Load Sound Effects =======
 idle_sound = pygame.mixer.Sound("assets/idle.wav")
-idle_sound.set_volume(1.0)  # back to normal volume
+idle_sound.set_volume(0.0)
 idle_sound.play(loops=-1)
 
 accelerate_sound = pygame.mixer.Sound("assets/accelerate.wav")
-accelerate_sound.set_volume(0.2)  # reduced volume
+accelerate_sound.set_volume(0.0)
 
 collision_sound = pygame.mixer.Sound("assets/collision.wav")
 drs_sound = pygame.mixer.Sound("assets/drs.wav")
+
+# ======= Recorder class =======
+class MovementRecorder:
+    def __init__(self):
+        self.data = []
+
+    def record(self, pos, angle, speed):
+        self.data.append({
+            "x": pos.x,
+            "y": pos.y,
+            "angle": angle,
+            "speed": speed
+        })
+
+    def save_to_file(self, filename="baku_player_run.json"):
+        with open(filename, "w") as f:
+            json.dump(self.data, f, indent=2)
 
 
 # ======= Track Class =======
 class Track(pygame.sprite.Sprite):
     def __init__(self, pos, group):
         super().__init__(group)
-        self.image = scale_image(pygame.image.load('assets/baku.png').convert_alpha(), 5.7)
+        self.image = scale_image(pygame.image.load('assets/baku.png').convert_alpha(), 4.7)
         self.rect = self.image.get_rect(topleft=pos)
 
 # ======= Player Car Class =======
 class Red_car(pygame.sprite.Sprite):
     def __init__(self, pos, group):
         super().__init__(group)
-        self.original_image = scale_image(pygame.image.load('assets/red_car.png').convert_alpha(), 1.2)
+        self.original_image = scale_image(pygame.image.load('assets/red_car.png').convert_alpha(), 0.9)
         self.image = self.original_image
         self.rect = self.image.get_rect(center=pos)
         self.mask = pygame.mask.from_surface(self.image)
@@ -34,7 +52,7 @@ class Red_car(pygame.sprite.Sprite):
         self.angle = 305
         self.speed = 0
         self.acceleration = 0.05
-        self.max_speed = 9
+        self.max_speed = 8
         self.original_max_speed = self.max_speed
         self.deceleration = 0.06
         self.turn_speed = 1.5
@@ -71,18 +89,18 @@ class Red_car(pygame.sprite.Sprite):
         self.last_pos = self.pos.copy()
         rad = math.radians(self.angle)
         direction = pygame.Vector2(math.sin(rad), math.cos(rad)) * -1
-        self.pos += direction * self.speed
+        self.pos += direction * self.speed  # removed dt
         self.rect.center = self.pos
         self.image = pygame.transform.rotate(self.original_image, self.angle)
         self.rect = self.image.get_rect(center=self.rect.center)
         self.mask = pygame.mask.from_surface(self.image)
+
 
     def rollback(self):
         self.pos = self.last_pos
         self.rect.center = self.pos
         self.speed = 0
         collision_sound.play()
-
 
 # ======= Camera Group =======
 class CameraGroup(pygame.sprite.Group):
@@ -94,20 +112,20 @@ class CameraGroup(pygame.sprite.Group):
         self.half_h = self.display_surface.get_height() // 2
         self.recently_crossed = False
 
-        self.track_surface = scale_image(pygame.image.load('assets/baku.png').convert_alpha(), 5.7)
+        self.track_surface = scale_image(pygame.image.load('assets/baku.png').convert_alpha(), 4.7)
         self.track_rect = self.track_surface.get_rect(topleft=(0, 0))
-        self.border_surface = scale_image(pygame.image.load('assets/baku_border.png').convert_alpha(), 5.7)
+        self.border_surface = scale_image(pygame.image.load('assets/baku_border.png').convert_alpha(), 4.7)
         self.border_rect = self.border_surface.get_rect(topleft=(0, 0))
         self.border_mask = pygame.mask.from_surface(self.border_surface)
 
-        self.drs_surface = scale_image(pygame.image.load('assets/baku_drs.png').convert_alpha(), 5.7)
+        self.drs_surface = scale_image(pygame.image.load('assets/baku_drs.png').convert_alpha(), 4.7)
         self.drs_rect = self.drs_surface.get_rect(topleft=(0, 0))
         self.drs_mask = pygame.mask.from_surface(self.drs_surface)
 
         self.finish_img = pygame.transform.rotate(
-            scale_image(pygame.image.load('assets/finish.png').convert_alpha(), 2.7), 305
+            scale_image(pygame.image.load('assets/finish.png').convert_alpha(), 2.4), 305
         )
-        self.finish_rect = self.finish_img.get_rect(center=(8839, 2916))
+        self.finish_rect = self.finish_img.get_rect(center=(7252,2438))
         self.finish_mask = pygame.mask.from_surface(self.finish_img)
 
         self.start_time = 0
@@ -197,11 +215,14 @@ class CameraGroup(pygame.sprite.Group):
             countdown_text = font.render(f"{int(countdown_timer) + 1}", True, (255, 0, 0))
             self.display_surface.blit(countdown_text, (WIDTH // 2 - 20, HEIGHT // 2 - 20))
 
+        # Draw clicked waypoints as red dots
+        for x, y in waypoints:
+            pygame.draw.circle(self.display_surface, (255, 0, 0), (int(x - self.offset.x), int(y - self.offset.y)), 5)
+
 # ======= Init =======
 pygame.init()
-
-pygame.mixer.music.load("assets/time_trial.mp3")  # make sure the file exists in /assets
-pygame.mixer.music.set_volume(0.5)
+pygame.mixer.music.load("assets/time_trial.mp3")
+pygame.mixer.music.set_volume(0.0)
 pygame.mixer.music.play(-1)
 
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
@@ -211,7 +232,9 @@ font = pygame.font.Font(None, 36)
 start_ticks = pygame.time.get_ticks()
 
 camera_group = CameraGroup()
-player = Red_car((9306, 2515), camera_group)
+player = Red_car((7482,2213), camera_group)
+recorder = MovementRecorder()
+
 
 # ======= Game Loop =======
 while True:
@@ -220,9 +243,27 @@ while True:
             pygame.quit()
             sys.exit()
 
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
+            recorder.save_to_file("baku_player_run.json")
+            print("Recording saved and exiting.")
+            pygame.quit()
+            sys.exit()
+
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            x, y = pygame.mouse.get_pos()
+            world_x = int(x + camera_group.offset.x)
+            world_y = int(y + camera_group.offset.y)
+            waypoints.append((world_x, world_y))
+            print(', '.join([f"({x},{y})" for x, y in waypoints]))
+
     countdown_timer = max(0, 3 - (pygame.time.get_ticks() - start_ticks) / 1000)
 
-    camera_group.update()
+    dt = clock.tick(60) / 1000
+    player.update()
+    recorder.record(player.pos, player.angle, player.speed)
+
+    # camera_group.update()
     camera_group.custom_draw(player)
     pygame.display.update()
-    clock.tick(60)
+
+

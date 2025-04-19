@@ -215,6 +215,7 @@ document.addEventListener("click", e => {
   launchGame(track, mode);
 });
 
+
 function launchGame(track, mode) {
   const name = sessionStorage.getItem("playerName") || "Player 1";
 
@@ -225,13 +226,7 @@ function launchGame(track, mode) {
     body: JSON.stringify({ name })
   });
 
-  fetch("/start_game", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ track, mode })
-  })
-
-
+  // Launch game only once
   fetch("/start_game", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -247,8 +242,6 @@ function launchGame(track, mode) {
     })
     .catch(() => alert("Error launching game."));
 }
-
-
 // ========== Init ========== 
 document.addEventListener("DOMContentLoaded", () => {
   updatePlayerNameDisplay();
