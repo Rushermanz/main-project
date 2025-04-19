@@ -44,7 +44,7 @@ class Track(pygame.sprite.Sprite):
 class Red_car(pygame.sprite.Sprite):
     def __init__(self, pos, group):
         super().__init__(group)
-        self.original_image = scale_image(pygame.image.load('assets/red_car.png').convert_alpha(), 1)
+        self.original_image = scale_image(pygame.image.load('assets/red_car.png').convert_alpha(), 1.3)
         self.image = self.original_image
         self.rect = self.image.get_rect(center=pos)
         self.mask = pygame.mask.from_surface(self.image)
@@ -123,7 +123,7 @@ class CameraGroup(pygame.sprite.Group):
         self.drs_mask = pygame.mask.from_surface(self.drs_surface)
 
         self.finish_img = pygame.transform.rotate(
-            scale_image(pygame.image.load('assets/finish.png').convert_alpha(), 1.9), 90
+            scale_image(pygame.image.load('assets/finish.png').convert_alpha(), 2.1), 90
         )
         self.finish_rect = self.finish_img.get_rect(center=(5974, 3032))
         self.finish_mask = pygame.mask.from_surface(self.finish_img)
@@ -232,7 +232,7 @@ font = pygame.font.Font(None, 36)
 start_ticks = pygame.time.get_ticks()
 
 camera_group = CameraGroup()
-player = Red_car((5096, 2964), camera_group)
+player = Red_car((5407,2970), camera_group)
 recorder = MovementRecorder()
 
 
