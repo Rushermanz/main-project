@@ -1,0 +1,360 @@
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+    background: #0f0f0f;
+    font-family: "Tiny5", sans-serif;
+    color: white;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+  }
+  
+  body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 200%;
+    background-image:
+      repeating-linear-gradient(45deg, #1c1c1c 0 40px, #243040 40px 80px),
+      repeating-linear-gradient(-45deg, #1c1c1c 0 40px, #243040 40px 80px);
+    background-size: 80px 80px;
+    animation: waveBG 6s ease-in-out infinite;
+    z-index: -1;
+    transform-origin: center;
+    opacity: 0.5;
+  }
+
+  @keyframes waveBG {
+    0% {
+      transform: translateX(0) translateY(0) scale(1) skewY(1deg);
+    }
+    50% {
+      transform: translateX(-20px) translateY(-10px) scale(1.02) skewY(-1deg);
+    }
+    100% {
+      transform: translateX(0) translateY(0) scale(1) skewY(1deg);
+    }
+  }
+  
+
+  .select-title {
+    margin-top: 40px;
+    font-size: 2.5rem;
+    color: #fff;
+  }
+  
+  .back-button {
+    position: absolute;
+    top: 20px;
+    left: 30px;
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    font-family: inherit;
+    background-color: #111;
+    border: 2px solid white;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .back-button:hover {
+    background-color: #333;
+  }
+  
+  .track-grid {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    padding: 20px 40px;
+  }
+  
+  .track-card {
+    background-color: #111;
+    border: 2px solid #444;
+    border-radius: 8px;
+    overflow: hidden;
+    image-rendering: pixelated;
+    transition: transform 0.3s ease;
+  }
+  
+  .track-card:hover {
+    transform: scale(1.03);
+    cursor: pointer;
+  }
+  
+  .track-card img {
+    width: 100%;
+    height: 160px;
+    object-fit: contain;
+    background-color: #000; /* optional to fill empty space */
+    padding: 10px; /* gives it breathing space */
+  }
+  
+  
+  .track-name {
+    padding: 10px 0;
+    font-size: 1.3rem;
+    background: #1a1a2e;
+    color: white;
+    border-top: 2px solid #222;
+  }
+  
+  .track-difficulty {
+    display: inline-block;
+    margin: 8px;
+    padding: 4px 10px;
+    font-size: 0.9rem;
+    border-radius: 4px;
+  }
+  
+  .easy-tag {
+    background-color: #00c853;
+    color: #fff;
+  }
+  
+  .medium-tag {
+    background-color: #fbc02d;
+    color: #000;
+  }
+  
+  .hard-tag {
+    background-color: #e53935;
+    color: #fff;
+  }
+  
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modal-content.settings-box {
+    background-color: #0a0a1a;
+    border: 2px solid cyan;
+    border-radius: 10px;
+    padding: 30px;
+    width: 90%;
+    max-width: 600px;
+    font-family: "Tiny5", sans-serif;
+    color: white;
+  }
+  
+  .track-tab {
+    min-height: 140px;
+    margin: 10px 0;
+    display: none;
+  }
+  
+  .track-tab.active {
+    display: block;
+  }
+  
+  .race-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+  }
+  
+  .race-btn {
+    font-family: inherit;
+    padding: 12px 20px;
+    border: 2px solid white;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  .pink { background-color: #e91e63; color: white; }
+  .cyan { background-color: #00e5ff; color: black; }
+  .green { background-color: #00e676; color: black; }
+  
+  .leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+  }
+  
+  .leaderboard-table th,
+  .leaderboard-table td {
+    padding: 10px;
+    border: 1px solid white;
+    font-size: 1rem;
+  }
+  
+  .track-popup-layout {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: nowrap; /* Prevent stacking unless very small screens */
+  }
+  
+  .popup-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .popup-left img {
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+    border: none;
+    margin-bottom: 10px;
+  }
+  
+  
+  .popup-difficulty-tag {
+    margin-top: 5px;
+    padding: 4px 10px;
+    font-size: 0.8rem;
+    border-radius: 4px;
+  }
+  
+  .popup-right {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .tab-switch {
+    display: flex;
+    margin-bottom: 10px;
+    background: #050505;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  
+  .track-tab-switch .tab {
+    flex: 1;
+    padding: 8px 0;
+    font-size: 1rem;
+    background-color: #111;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background-color 0.2s ease;
+  }
+  
+  .track-tab-switch .tab.active {
+    background-color: #00ffff;
+    color: black;
+  }
+  
+  .tab {
+    flex: 1;
+    padding: 8px;
+    background: #0a0a0a;
+    color: white;
+    border: none;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  
+  .tab.active {
+    background: cyan;
+    color: black;
+    font-weight: bold;
+  }
+  
+  /* Responsive fallback */
+  @media (max-width: 768px) {
+    .track-popup-layout {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    #popupTrackImage {
+      width: 90vw;
+      height: auto;
+    }
+  
+    .popup-right {
+      width: 90vw;
+    }
+  }
+  
+  @media screen and (max-width: 768px) {
+    .modal-content.settings-box {
+      flex-direction: column;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 20px;
+    }
+  
+    .track-popup-layout {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .popup-left {
+      margin-bottom: 20px;
+    }
+  
+    .popup-left img {
+      width: 80vw;
+      height: auto;
+      max-width: 320px;
+    }
+  
+    .popup-difficulty-tag {
+      margin-top: 10px;
+    }
+  
+    .popup-right {
+      width: 100%;
+      text-align: center;
+    }
+  
+    .tab-switch {
+      display: flex;
+      justify-content: center;
+      margin: 15px 0;
+      flex-wrap: wrap;
+    }
+  
+    .tab {
+      flex: 1;
+      min-width: 120px;
+      margin: 5px;
+      padding: 10px;
+    }
+  
+    .track-tab {
+      width: 100%;
+      padding: 10px 0;
+    }
+  
+    .leaderboard-table {
+      font-size: 0.9rem;
+    }
+  
+    .race-buttons {
+      flex-direction: column;
+      gap: 10px;
+    }
+  
+    .race-btn {
+      width: 100%;
+    }
+  
+    .back-button {
+      margin-top: 20px;
+      width: 100%;
+    }
+  }
+  

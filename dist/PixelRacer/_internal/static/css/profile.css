@@ -1,0 +1,238 @@
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #0f0f0f;
+  font-family: "Tiny5", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  image-rendering: pixelated;
+  position: relative;
+}
+
+/* Checkered animated background */
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 200%;
+  background-image:
+    repeating-linear-gradient(45deg, #1c1c1c 0 40px, #243040 40px 80px),
+    repeating-linear-gradient(-45deg, #1c1c1c 0 40px, #243040 40px 80px);
+  background-size: 80px 80px;
+  animation: waveBG 6s ease-in-out infinite;
+  z-index: -1;
+  transform-origin: center;
+  opacity: 0.5;
+}
+
+@keyframes waveBG {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.03) rotate(1deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 30px 40px;
+  border-radius: 12px;
+  gap: 40px;
+  width: 80%;
+  max-width: 1000px;
+  position: relative; /* necessary for absolute children */
+}
+
+
+.profile-left {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 50%;
+  max-width: 500px;
+}
+
+.profile-title {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px #444;
+}
+
+.player-name-box label {
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#playerNameInput {
+  padding: 8px;
+  font-size: 1rem;
+  background-color: #222;
+  color: white;
+  border: 2px solid white;
+  font-family: inherit;
+}
+
+.input-group button {
+  padding: 8px 16px;
+  font-size: 1rem;
+  background-color: #222;
+  border: 2px solid #fff;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-family: inherit;
+}
+
+.input-group button:hover {
+  background-color: #444;
+}
+
+.car-customization-box h2 {
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+}
+
+.car-display {
+  margin-bottom: 10px;
+}
+
+.car-display img {
+  width: 150px;
+  cursor: pointer;
+  image-rendering: pixelated;
+}
+
+
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: #222;
+  color: white;
+  padding: 8px 16px;
+  border: 2px solid white;
+  text-decoration: none;
+  font-family: inherit;
+}
+
+.back-button:hover {
+  background: #444;
+}
+
+.avatar-section {
+  position: absolute;
+  right: 250px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+
+.avatar-section img {
+  width: 240px;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 50%;
+  image-rendering: pixelated;
+  border: 2px solid #fff;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.avatar-section img:hover {
+  transform: scale(1.05);
+}
+
+
+#avatarUpload {
+  font-size: 0.8rem;
+  font-family: inherit;
+  color: white;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+
+
+@media screen and (max-width: 768px) {
+  body {
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  .container {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 20px 10px;
+    gap: 20px;
+  }
+
+  .profile-left {
+    width: 100%;
+    max-width: 100%;
+    align-items: center;
+    text-align: center;
+  }
+
+  .input-group {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  #playerNameInput,
+  .input-group button {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .avatar-section {
+    position: static;
+    transform: none;
+    margin-top: 20px;
+  }
+
+  .avatar-section img {
+    width: 120px;
+    height: 120px;
+  }
+
+  .car-display img {
+    width: 100px;
+  }
+
+  .back-button {
+    padding: 4px 10px;
+    font-size: 0.8rem;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+  }
+}
+
